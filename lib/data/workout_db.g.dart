@@ -142,9 +142,10 @@ class WorkoutNotesAdapter extends TypeAdapter<WorkoutNotes> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return WorkoutNotes()
-      ..name = fields[0] as String
-      ..note = fields[1] as String;
+    return WorkoutNotes(
+      name: fields[0] as String,
+      note: fields[1] as String,
+    );
   }
 
   @override
