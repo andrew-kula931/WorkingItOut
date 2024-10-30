@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'pages/workout_page.dart';
+import 'workout_pages/workout_page.dart';
 import 'data/workout_db.dart';
-import 'pages/workout_archive.dart';
-import 'pages/routine_planner.dart';
+import 'workout_pages/workout_archive.dart';
+import 'workout_pages/routine_planner.dart';
+import 'gaming_pages/gaming_home.dart';
 
 void main() async {
 
@@ -245,6 +246,9 @@ class _WorkoutAppState extends State<WorkoutApp> {
                     children: [
                       GestureDetector(
                         onTap: _gamingMenu,
+                        onLongPress: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
+                        },
                         child:Container(
                           width: screenWidth * .25,
                           height: 50,
