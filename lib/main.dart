@@ -57,7 +57,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
   var routinePlannerColor = Colors.lightGreen;
 
   //Dropdown menu variables
-  bool healthMenu = false;
+  bool gamingMenu = false;
   bool workoutMenu = false;
   bool orgMenu = false;
   bool funMenu = false;
@@ -68,9 +68,9 @@ class _WorkoutAppState extends State<WorkoutApp> {
     super.dispose();
   }
 
-  void _healthMenu() {
+  void _gamingMenu() {
     setState(() {
-      healthMenu = !healthMenu;
+      gamingMenu = !gamingMenu;
     });
   }
 
@@ -244,24 +244,24 @@ class _WorkoutAppState extends State<WorkoutApp> {
                   Column(
                     children: [
                       GestureDetector(
-                        onTap: _healthMenu,
+                        onTap: _gamingMenu,
                         child:Container(
                           width: screenWidth * .25,
                           height: 50,
                           decoration: const BoxDecoration(color: Colors.white),
                           child: const Center(
-                            child: Text('Heath'),
+                            child: Text('Gaming'),
                           ),
                         ),
                       ),
-                      if (healthMenu)
+                      if (gamingMenu)
                         Container(
                           width: screenWidth * .25,
                           decoration: const BoxDecoration(color: Colors.green),
                           child: const Column (
                             children: [
-                              Text("Update Calories"),
-                              Text('View History'),
+                              Text("Games List"),
+                              Text('Most Recent'),
                             ],
                           ),
                         ),
