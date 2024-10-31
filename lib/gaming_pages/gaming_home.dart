@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../gaming_components/add_game.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class GamingHome extends StatefulWidget {
   const GamingHome({super.key});
@@ -9,6 +10,7 @@ class GamingHome extends StatefulWidget {
 }
 
 class _GamingHomeState extends State<GamingHome> {
+  var games = Hive.box('Games');
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +68,8 @@ class _GamingHomeState extends State<GamingHome> {
                   context: context, 
                   builder: (context) {
                     return const AddGame();
+                  }).then((value) {
+                    setState(() {});
                   });
               },
               child: const Text('Add Game')
@@ -74,7 +78,7 @@ class _GamingHomeState extends State<GamingHome> {
           SizedBox(
             height: MediaQuery.of(context).size.height * .5,
             child: ListView.builder(
-              itemCount: 3, //Just a placeholder
+              itemCount: games.length,
               itemBuilder: (context, index) {
                 return Text('Game #$index');
               }

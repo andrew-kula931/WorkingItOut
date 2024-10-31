@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import '../data/gaming_db.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image/image.dart' as img;
 
 class AddGame extends StatefulWidget {
   const AddGame({super.key});
@@ -25,10 +26,17 @@ class _AddGameState extends State<AddGame> {
       //final fileName = result.files.single.name;
 
       if (file != null) {
-        setState(() {
-          _imageBytes = file;
-        });
-        return file;
+        final img.Image? image = img.decodeImage(file);
+
+        if (image != null) {
+          final img.Image resizedImage = img.copyResize(image, width: 200);
+
+          final Uint8List resizedImageBytes = Uint8List.fromList(img.encodePng(resizedImage));
+          setState(() {
+            _imageBytes = resizedImageBytes;
+          });
+          return resizedImageBytes;
+        }
       }
     }
     return null;
@@ -37,7 +45,11 @@ class _AddGameState extends State<AddGame> {
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight (
-      child: SizedBox (
+      child: ConstrainedBox (
+        constraints: const BoxConstraints(
+          maxHeight: 1000,
+          minHeight: 600,
+        ),
         child: Column(
           children: [
             Row(
@@ -62,8 +74,8 @@ class _AddGameState extends State<AddGame> {
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: _imageBytes == null ? Container(
-                      width: 200,
-                      height: 200,
+                      width: 180,
+                      height: 180,
                       color: const Color.fromARGB(255, 196, 193, 193),
                       child: const Center( 
                         child: Text('Add Image')
@@ -87,12 +99,12 @@ class _AddGameState extends State<AddGame> {
               child: ElevatedButton(
                 onPressed: () async {
                   var box = Hive.box('Games');
-                  var GameData = GamesDb(
+                  var gameData = GamesDb(
                     name: _nameController.text,
                     description: _descriptionController.text,
                     imageBytes: _imageBytes,
                   );
-                  await box.add(GameData);
+                  await box.add(gameData);
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context);
                 },
