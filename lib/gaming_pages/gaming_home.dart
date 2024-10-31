@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../gaming_components/add_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../data/gaming_db.dart';
 
 class GamingHome extends StatefulWidget {
   const GamingHome({super.key});
@@ -75,14 +76,43 @@ class _GamingHomeState extends State<GamingHome> {
               child: const Text('Add Game')
             ),
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * .5,
-            child: ListView.builder(
-              itemCount: games.length,
-              itemBuilder: (context, index) {
-                return Text('Game #$index');
-              }
-            )
+          const Padding(
+            padding: EdgeInsets.only(top: 5),
+            child: Text('Games', style: TextStyle(fontSize: 20)),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * .58,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 180.0,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0),
+                itemCount: games.length,
+                itemBuilder: (context, index) {
+                  var item = games.getAt(index);
+                  return Container(
+                    color: const Color.fromARGB(99, 46, 33, 129),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(item.name),
+                          item.imageBytes != null ?
+                            Expanded(
+                              child: Image.memory(
+                                item!.imageBytes!,
+                                fit: BoxFit.contain,)
+                              ) : const Text('No image'),
+                        ],
+                      )
+                    )
+                  );
+                }
+              )
+            ),
           ),
         ],
       ),

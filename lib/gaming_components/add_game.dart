@@ -29,7 +29,7 @@ class _AddGameState extends State<AddGame> {
         final img.Image? image = img.decodeImage(file);
 
         if (image != null) {
-          final img.Image resizedImage = img.copyResize(image, width: 200);
+          final img.Image resizedImage = img.copyResize(image, width: 150, height: 150);
 
           final Uint8List resizedImageBytes = Uint8List.fromList(img.encodePng(resizedImage));
           setState(() {
