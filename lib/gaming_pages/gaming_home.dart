@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../gaming_components/add_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../data/gaming_db.dart';
+import 'game_profile.dart';
 
 class GamingHome extends StatefulWidget {
   const GamingHome({super.key});
@@ -92,21 +92,26 @@ class _GamingHomeState extends State<GamingHome> {
                 itemCount: games.length,
                 itemBuilder: (context, index) {
                   var item = games.getAt(index);
-                  return Container(
-                    color: const Color.fromARGB(99, 46, 33, 129),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(item.name),
-                          item.imageBytes != null ?
-                            Expanded(
-                              child: Image.memory(
-                                item!.imageBytes!,
-                                fit: BoxFit.contain,)
-                              ) : const Text('No image'),
-                        ],
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(title: item.name)));
+                    },
+                    child: Container(
+                      color: const Color.fromARGB(99, 46, 33, 129),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(item.name),
+                            item.imageBytes != null ?
+                              Expanded(
+                                child: Image.memory(
+                                  item!.imageBytes!,
+                                  fit: BoxFit.contain,)
+                                ) : const Text('No image'),
+                          ],
+                        )
                       )
                     )
                   );
