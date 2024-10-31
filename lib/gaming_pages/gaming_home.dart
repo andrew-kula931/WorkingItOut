@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../gaming_components/add_game.dart';
 
 class GamingHome extends StatefulWidget {
   const GamingHome({super.key});
@@ -60,7 +61,13 @@ class _GamingHomeState extends State<GamingHome> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context, 
+                  builder: (context) {
+                    return const AddGame();
+                  });
+              },
               child: const Text('Add Game')
             ),
           ),
