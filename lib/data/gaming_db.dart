@@ -17,6 +17,6 @@ class GamesDb {
   GamesDb({
     this.name = '',
     this.description = '',
-    imageBytes = '',
+    this.imageBytes,
   });
 }

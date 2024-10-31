@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
+import '../data/gaming_db.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:file_picker/file_picker.dart';
 
 class AddGame extends StatefulWidget {
   const AddGame({super.key});
@@ -9,28 +13,91 @@ class AddGame extends StatefulWidget {
 
 class _AddGameState extends State<AddGame> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  Uint8List? _imageBytes;
+
+  //Function for adding box info
+  Future<Uint8List?> _pickFile() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.image);
+
+    if (result != null) {
+      final file = result.files.single.bytes;
+      //final fileName = result.files.single.name;
+
+      if (file != null) {
+        setState(() {
+          _imageBytes = file;
+        });
+        return file;
+      }
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight (
       child: SizedBox (
-        height: 200,
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  children: [
-                    SizedBox(
-                      width: 75,
-                      child: TextField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
-                      ),
+                SizedBox(
+                  width: 200,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 10),
+                    child: TextField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
                     ),
-                  ],
+                  ),
                 ),
+                GestureDetector(
+                  onTap: () {
+                    _pickFile();
+                  },
+
+                  //Addable image slot here
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: _imageBytes == null ? Container(
+                      width: 200,
+                      height: 200,
+                      color: const Color.fromARGB(255, 196, 193, 193),
+                      child: const Center( 
+                        child: Text('Add Image')
+                      ) 
+                    ) : Image.memory(_imageBytes!),
+                  )
+                )
               ],
+            ),
+            SizedBox(
+              width: 500,
+              child: TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder()),
+                maxLines: 10,
+                minLines: 3,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(
+                onPressed: () async {
+                  var box = Hive.box('Games');
+                  var GameData = GamesDb(
+                    name: _nameController.text,
+                    description: _descriptionController.text,
+                    imageBytes: _imageBytes,
+                  );
+                  await box.add(GameData);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                },
+                child: const Text('Add Game'),
+              ),
             ),
           ],
         ),

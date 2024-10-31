@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'workout_pages/workout_page.dart';
 import 'data/workout_db.dart';
+import 'data/gaming_db.dart';
 import 'workout_pages/workout_archive.dart';
 import 'workout_pages/routine_planner.dart';
 import 'gaming_pages/gaming_home.dart';
 
 void main() async {
 
+  WidgetsFlutterBinding.ensureInitialized();
+  //final appDocumentsDir = await pathProvider.getApplicationDocumentsDirectory();
+  // await Hive.initFlutter(appDocumentsDir.path);
   await Hive.initFlutter();
   Hive.registerAdapter(WorkoutDbAdapter());
 
@@ -16,6 +20,8 @@ void main() async {
   Hive.registerAdapter(WorkoutScheduleAdapter());
 
   Hive.registerAdapter(WorkoutNotesAdapter());
+
+  Hive.registerAdapter(GamesDbAdapter());
 
   runApp(const MyApp());
 }
@@ -246,7 +252,11 @@ class _WorkoutAppState extends State<WorkoutApp> {
                     children: [
                       GestureDetector(
                         onTap: _gamingMenu,
-                        onLongPress: () {
+                        onLongPress: () async {
+                          if (!Hive.isBoxOpen('Games')) {
+                            await Hive.openBox('Games');                   
+                          }
+                          // ignore: use_build_context_synchronously
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
                         },
                         child:Container(
