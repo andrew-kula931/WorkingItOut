@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../gaming_components/add_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'game_profile.dart';
+import '../data/gaming_db.dart';
 
 class GamingHome extends StatefulWidget {
   const GamingHome({super.key});
@@ -12,6 +13,7 @@ class GamingHome extends StatefulWidget {
 
 class _GamingHomeState extends State<GamingHome> {
   var games = Hive.box('Games');
+  var recentsBox = Hive.box('RecentGames');
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +35,12 @@ class _GamingHomeState extends State<GamingHome> {
               SizedBox(
                 height: 100,
                 width: MediaQuery.of(context).size.width * 0.2,
-                child: const Text('Recently Played')
+                child: const Text('Recently Played', style: TextStyle(fontSize: 20))
               ),
+              
+              /*
+              Need to make the following row a dynamic list for the recently played games
+              */
               Row(
                 children: [
                   Container(
@@ -93,8 +99,19 @@ class _GamingHomeState extends State<GamingHome> {
                 itemBuilder: (context, index) {
                   var item = games.getAt(index);
                   return GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(title: item.name)));
+                    onTap: () async {
+                      var recent = recentsBox.getAt(0);
+                      if (recent.recents.length < 3) {
+                        recent.recents.insert(0, index);
+                      } else {
+                        if (!recent.recents.contains(index)) {
+                          recent.recents.remove(recent.recents[2]);
+                          recent.recents.insert(0, index);
+                        }
+                      }
+                      print(recent.recents);
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: item)));
                     },
                     child: Container(
                       color: const Color.fromARGB(99, 46, 33, 129),

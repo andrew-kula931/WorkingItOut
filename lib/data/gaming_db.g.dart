@@ -19,7 +19,7 @@ class GamesDbAdapter extends TypeAdapter<GamesDb> {
     return GamesDb(
       name: fields[0] as String,
       description: fields[1] as String,
-      imageBytes: fields[2] as dynamic,
+      imageBytes: fields[2] as Uint8List?,
     );
   }
 
@@ -42,6 +42,40 @@ class GamesDbAdapter extends TypeAdapter<GamesDb> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is GamesDbAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class RecentGamesAdapter extends TypeAdapter<RecentGames> {
+  @override
+  final int typeId = 11;
+
+  @override
+  RecentGames read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return RecentGames(
+      recents: (fields[0] as List).cast<int>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, RecentGames obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.recents);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RecentGamesAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

@@ -3,6 +3,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 part 'gaming_db.g.dart';
 
+//flutter packages pub run build_runner build
+
 @HiveType(typeId: 10)
 class GamesDb {
   @HiveField(0)
@@ -19,4 +21,12 @@ class GamesDb {
     this.description = '',
     this.imageBytes,
   });
+}
+
+@HiveType(typeId: 11)
+class RecentGames {
+  @HiveField(0)
+  late List<int> recents;
+
+  RecentGames({this.recents = const []});
 }

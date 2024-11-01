@@ -23,6 +23,8 @@ void main() async {
 
   Hive.registerAdapter(GamesDbAdapter());
 
+  Hive.registerAdapter(RecentGamesAdapter());
+
   runApp(const MyApp());
 }
 
@@ -255,6 +257,9 @@ class _WorkoutAppState extends State<WorkoutApp> {
                         onLongPress: () async {
                           if (!Hive.isBoxOpen('Games')) {
                             await Hive.openBox('Games');                   
+                          }
+                          if (!Hive.isBoxOpen('RecentGames')) {
+                            await Hive.openBox('RecentGames');
                           }
                           // ignore: use_build_context_synchronously
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
