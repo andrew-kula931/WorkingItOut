@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'pages/workout_page.dart';
+import 'workout_pages/workout_page.dart';
 import 'data/workout_db.dart';
-import 'pages/workout_archive.dart';
-import 'pages/routine_planner.dart';
+import 'data/gaming_db.dart';
+import 'workout_pages/workout_archive.dart';
+import 'workout_pages/routine_planner.dart';
+import 'gaming_pages/gaming_home.dart';
 
 void main() async {
 
+  WidgetsFlutterBinding.ensureInitialized();
+  //final appDocumentsDir = await pathProvider.getApplicationDocumentsDirectory();
+  // await Hive.initFlutter(appDocumentsDir.path);
   await Hive.initFlutter();
   Hive.registerAdapter(WorkoutDbAdapter());
 
@@ -15,6 +20,10 @@ void main() async {
   Hive.registerAdapter(WorkoutScheduleAdapter());
 
   Hive.registerAdapter(WorkoutNotesAdapter());
+
+  Hive.registerAdapter(GamesDbAdapter());
+
+  Hive.registerAdapter(RecentGamesAdapter());
 
   runApp(const MyApp());
 }
@@ -57,7 +66,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
   var routinePlannerColor = Colors.lightGreen;
 
   //Dropdown menu variables
-  bool healthMenu = false;
+  bool gamingMenu = false;
   bool workoutMenu = false;
   bool orgMenu = false;
   bool funMenu = false;
@@ -68,9 +77,9 @@ class _WorkoutAppState extends State<WorkoutApp> {
     super.dispose();
   }
 
-  void _healthMenu() {
+  void _gamingMenu() {
     setState(() {
-      healthMenu = !healthMenu;
+      gamingMenu = !gamingMenu;
     });
   }
 
@@ -244,24 +253,38 @@ class _WorkoutAppState extends State<WorkoutApp> {
                   Column(
                     children: [
                       GestureDetector(
-                        onTap: _healthMenu,
+                        onTap: _gamingMenu,
+                        onLongPress: () async {
+                          if (!Hive.isBoxOpen('Games')) {
+                            await Hive.openBox('Games');                   
+                          }
+                          if (!Hive.isBoxOpen('RecentGames')) {
+                            await Hive.openBox('RecentGames');
+                            if (Hive.box('RecentGames').isEmpty) {
+                              RecentGames data = RecentGames(recents: []);
+                              await Hive.box('RecentGames').add(data);
+                            }
+                          }
+                          // ignore: use_build_context_synchronously
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
+                        },
                         child:Container(
                           width: screenWidth * .25,
                           height: 50,
                           decoration: const BoxDecoration(color: Colors.white),
                           child: const Center(
-                            child: Text('Heath'),
+                            child: Text('Gaming'),
                           ),
                         ),
                       ),
-                      if (healthMenu)
+                      if (gamingMenu)
                         Container(
                           width: screenWidth * .25,
                           decoration: const BoxDecoration(color: Colors.green),
                           child: const Column (
                             children: [
-                              Text("Update Calories"),
-                              Text('View History'),
+                              Text("Games List"),
+                              Text('Most Recent'),
                             ],
                           ),
                         ),

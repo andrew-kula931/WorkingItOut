@@ -42,7 +42,7 @@ class WNotesListState extends State<WNotesList> {
           ],
         ),
 
-        //The list of notes
+        //This is the list of notes
         SizedBox(
           height: 300,
           child: Padding(
