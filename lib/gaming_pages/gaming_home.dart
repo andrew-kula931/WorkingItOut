@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../gaming_components/add_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'game_profile.dart';
-import '../data/gaming_db.dart';
 
 class GamingHome extends StatefulWidget {
   const GamingHome({super.key});
@@ -38,31 +37,35 @@ class _GamingHomeState extends State<GamingHome> {
                 child: const Text('Recently Played', style: TextStyle(fontSize: 20))
               ),
               
-              /*
-              Need to make the following row a dynamic list for the recently played games
-              */
-              Row(
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: const BoxDecoration(color: Colors.blue),
-                    child: const Text('Game One'),
-                  ),
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: const BoxDecoration(color: Colors.red),
-                    child: const Text('Game Two'),
-                  ),
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: const BoxDecoration(color: Colors.yellow),
-                    child: const Text('Game Three'),
-                  ),
-                ]
-              )
+              //Dynamic list of recently played games
+              SizedBox(
+                width: 500,
+                height: 175,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: recentsBox.getAt(0).recents.length,
+                  itemBuilder: (context, index) {
+                    var recentGame = games.getAt(recentsBox.getAt(0).recents[index]);
+                    return Container(
+                      color: const Color.fromARGB(99, 46, 33, 129),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(recentGame.name),
+                            recentGame.imageBytes != null ?
+                              Image.memory(
+                                recentGame!.imageBytes!,
+                                fit: BoxFit.contain,)
+                              : const Text('No image'),
+                          ],
+                        )
+                      )
+                    );
+                  }
+                ),
+              ),
             ],
           ),
 
@@ -109,9 +112,13 @@ class _GamingHomeState extends State<GamingHome> {
                           recent.recents.insert(0, index);
                         }
                       }
-                      print(recent.recents);
+                      //Save changes
+                      await recentsBox.putAt(0, recent);
                       // ignore: use_build_context_synchronously
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: item)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: item)))
+                      .then((value) {
+                        setState(() {});
+                      });
                     },
                     child: Container(
                       color: const Color.fromARGB(99, 46, 33, 129),
