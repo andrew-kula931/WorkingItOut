@@ -6,6 +6,7 @@ import 'data/gaming_db.dart';
 import 'workout_pages/workout_archive.dart';
 import 'workout_pages/routine_planner.dart';
 import 'gaming_pages/gaming_home.dart';
+import 'gaming_pages/game_profile.dart';
 
 void main() async {
 
@@ -64,6 +65,8 @@ class _WorkoutAppState extends State<WorkoutApp> {
   var updateWorkoutColor = Colors.lightGreen;
   var viewWorkoutHistoryColor = Colors.lightGreen;
   var routinePlannerColor = Colors.lightGreen;
+  var gameListColor = Colors.lightGreen;
+  var recentGameColor = Colors.lightGreen;
 
   //Dropdown menu variables
   bool gamingMenu = false;
@@ -278,13 +281,69 @@ class _WorkoutAppState extends State<WorkoutApp> {
                         ),
                       ),
                       if (gamingMenu)
-                        Container(
+                        SizedBox(
                           width: screenWidth * .25,
-                          decoration: const BoxDecoration(color: Colors.green),
-                          child: const Column (
+                          child: Column (
                             children: [
-                              Text("Games List"),
-                              Text('Most Recent'),
+                              GestureDetector(
+                                onTap: () async {
+                                  if (!Hive.isBoxOpen('Games')) {
+                                    await Hive.openBox('Games');                   
+                                  }
+                                  if (!Hive.isBoxOpen('RecentGames')) {
+                                    await Hive.openBox('RecentGames');
+                                    if (Hive.box('RecentGames').isEmpty) {
+                                      RecentGames data = RecentGames(recents: []);
+                                      await Hive.box('RecentGames').add(data);
+                                    }
+                                  }
+
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
+                                },
+                                child: MouseRegion(
+                                  onEnter: (event) => setState(() => gameListColor = Colors.green),
+                                  onExit: (event) => setState(() => gameListColor = Colors.lightGreen),
+                                  child: Container (
+                                    decoration: BoxDecoration(color: gameListColor),
+                                    width: MediaQuery.of(context).size.width * .25,
+                                    height: 40,
+                                    child: const Center(
+                                      child: Text("Games List"),
+                                    )
+                                  )
+                                )
+                              ),
+                              
+                              GestureDetector(
+                                onTap: () async {
+                                  if (!Hive.isBoxOpen('Games')) {
+                                    await Hive.openBox('Games');                   
+                                  }
+                                  if (!Hive.isBoxOpen('RecentGames')) {
+                                    await Hive.openBox('RecentGames');
+                                  }
+
+                                  var recentGameBox = Hive.box('RecentGames').getAt(0);
+                                  if (recentGameBox != null && recentGameBox.recents.isNotEmpty) {
+                                    var gameLocation = Hive.box('Games').getAt(Hive.box('RecentGames').getAt(0).recents[0]);
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  GameProfile(gameInfo: gameLocation)));
+                                  }
+                                },
+                                child: MouseRegion(
+                                  onEnter: (event) => setState(() => recentGameColor = Colors.green),
+                                  onExit: (event) => setState(() => recentGameColor = Colors.lightGreen),
+                                  child: Container (
+                                    decoration: BoxDecoration(color: recentGameColor),
+                                    width: MediaQuery.of(context).size.width * .25,
+                                    height: 40,
+                                    child: const Center(
+                                      child: Text("Most Recent"),
+                                    )
+                                  )
+                                )
+                              ),
                             ],
                           ),
                         ),

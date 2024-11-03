@@ -32,9 +32,10 @@ class _GamingHomeState extends State<GamingHome> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                height: 100,
+                height: 175,
                 width: MediaQuery.of(context).size.width * 0.2,
-                child: const Text('Recently Played', style: TextStyle(fontSize: 20))
+                child: const Center(
+                  child: Text('Recently Played', style: TextStyle(fontSize: 20)))
               ),
               
               //Dynamic list of recently played games
