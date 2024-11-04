@@ -47,20 +47,28 @@ class _GamingHomeState extends State<GamingHome> {
                   itemCount: recentsBox.getAt(0).recents.length,
                   itemBuilder: (context, index) {
                     var recentGame = games.getAt(recentsBox.getAt(0).recents[index]);
-                    return Container(
-                      color: const Color.fromARGB(99, 46, 33, 129),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(recentGame.name),
-                            recentGame.imageBytes != null ?
-                              Image.memory(
-                                recentGame!.imageBytes!,
-                                fit: BoxFit.contain,)
-                              : const Text('No image'),
-                          ],
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: recentGame)))
+                        .then((value) {
+                          setState(() {});
+                        });
+                      },
+                      child: Container(
+                        color: const Color.fromARGB(99, 46, 33, 129),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(recentGame.name),
+                              recentGame.imageBytes != null ?
+                                Image.memory(
+                                  recentGame!.imageBytes!,
+                                  fit: BoxFit.contain,)
+                                : const Text('No image'),
+                            ],
+                          )
                         )
                       )
                     );
@@ -105,11 +113,14 @@ class _GamingHomeState extends State<GamingHome> {
                   return GestureDetector(
                     onTap: () async {
                       var recent = recentsBox.getAt(0);
-                      if (recent.recents.length < 3) {
+                      if (recent.recents.length < 3 && !recent.recents.contains(index)) {
                         recent.recents.insert(0, index);
                       } else {
                         if (!recent.recents.contains(index)) {
                           recent.recents.remove(recent.recents[2]);
+                          recent.recents.insert(0, index);
+                        } else {
+                          recent.recents.remove(index);
                           recent.recents.insert(0, index);
                         }
                       }

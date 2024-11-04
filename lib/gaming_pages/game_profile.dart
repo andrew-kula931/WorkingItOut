@@ -36,6 +36,19 @@ class _GameProfileState extends State<GameProfile> {
               ],
             ),
           ),
+          const Text('Goals'),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * .6,
+            child: ListView.builder(
+              itemCount: 1, //Placeholder value
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(color: Colors.orangeAccent.shade700),
+                  child: const Text('Testing object')
+                );
+              }
+            ),
+          ),
         ],
       )
     );
