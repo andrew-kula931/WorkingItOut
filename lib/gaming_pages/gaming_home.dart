@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../gaming_components/add_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'game_profile.dart';
+import '../data/gaming_db.dart';
 
 class GamingHome extends StatefulWidget {
   const GamingHome({super.key});
@@ -13,6 +14,7 @@ class GamingHome extends StatefulWidget {
 class _GamingHomeState extends State<GamingHome> {
   var games = Hive.box('Games');
   var recentsBox = Hive.box('RecentGames');
+  var gameGoals = Hive.box('GameGoals');
 
   @override
   Widget build(BuildContext context) {
@@ -41,33 +43,36 @@ class _GamingHomeState extends State<GamingHome> {
               //Dynamic list of recently played games
               SizedBox(
                 width: 500,
-                height: 175,
+                height: 180,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: recentsBox.getAt(0).recents.length,
                   itemBuilder: (context, index) {
                     var recentGame = games.getAt(recentsBox.getAt(0).recents[index]);
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: recentGame)))
-                        .then((value) {
-                          setState(() {});
-                        });
-                      },
-                      child: Container(
-                        color: const Color.fromARGB(99, 46, 33, 129),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(recentGame.name),
-                              recentGame.imageBytes != null ?
-                                Image.memory(
-                                  recentGame!.imageBytes!,
-                                  fit: BoxFit.contain,)
-                                : const Text('No image'),
-                            ],
+                    return Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: recentGame, index: recentsBox.getAt(0).recents[index])))
+                          .then((value) {
+                            setState(() {});
+                          });
+                        },
+                        child: Container(
+                          color: const Color.fromARGB(99, 46, 33, 129),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(recentGame.name),
+                                recentGame.imageBytes != null ?
+                                  Image.memory(
+                                    recentGame!.imageBytes!,
+                                    fit: BoxFit.contain,)
+                                  : const Text('No image'),
+                              ],
+                            )
                           )
                         )
                       )
@@ -127,7 +132,7 @@ class _GamingHomeState extends State<GamingHome> {
                       //Save changes
                       await recentsBox.putAt(0, recent);
                       // ignore: use_build_context_synchronously
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: item)))
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: item, index: index)))
                       .then((value) {
                         setState(() {});
                       });

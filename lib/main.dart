@@ -26,6 +26,8 @@ void main() async {
 
   Hive.registerAdapter(RecentGamesAdapter());
 
+  Hive.registerAdapter(GameGoalsAdapter());
+
   runApp(const MyApp());
 }
 
@@ -268,6 +270,9 @@ class _WorkoutAppState extends State<WorkoutApp> {
                               await Hive.box('RecentGames').add(data);
                             }
                           }
+                          if (!Hive.isBoxOpen('GameGoals')) {
+                            await Hive.openBox('GameGoals');
+                          }
                           // ignore: use_build_context_synchronously
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
                         },
@@ -297,6 +302,9 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       await Hive.box('RecentGames').add(data);
                                     }
                                   }
+                                  if (!Hive.isBoxOpen('GameGoals')) {
+                                    await Hive.openBox('GameGoals');
+                                  }
 
                                   // ignore: use_build_context_synchronously
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
@@ -323,12 +331,16 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                   if (!Hive.isBoxOpen('RecentGames')) {
                                     await Hive.openBox('RecentGames');
                                   }
+                                  if (!Hive.isBoxOpen('GameGoals')) {
+                                    await Hive.openBox('GameGoals');
+                                  }
 
                                   var recentGameBox = Hive.box('RecentGames').getAt(0);
                                   if (recentGameBox != null && recentGameBox.recents.isNotEmpty) {
                                     var gameLocation = Hive.box('Games').getAt(Hive.box('RecentGames').getAt(0).recents[0]);
                                     // ignore: use_build_context_synchronously
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  GameProfile(gameInfo: gameLocation)));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  
+                                      GameProfile(gameInfo: gameLocation, index: Hive.box('RecentGames').getAt(0).recents[0])));
                                   }
                                 },
                                 child: MouseRegion(

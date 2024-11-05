@@ -30,3 +30,24 @@ class RecentGames {
 
   RecentGames({this.recents = const []});
 }
+
+@HiveType(typeId: 12)
+class GameGoals {
+  @HiveField(0)
+  late String name;
+
+  @HiveField(1)
+  late String description;
+
+  @HiveField(2)
+  List<String> subpoints;
+
+  @HiveField(3)
+  late int gameid;
+
+  GameGoals({
+    required this.name,
+    this.description = '',
+    this.subpoints = const [],
+    required this.gameid});
+}
