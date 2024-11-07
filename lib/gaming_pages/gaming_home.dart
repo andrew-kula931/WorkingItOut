@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../gaming_components/add_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'game_profile.dart';
-import '../data/gaming_db.dart';
 
 class GamingHome extends StatefulWidget {
   const GamingHome({super.key});

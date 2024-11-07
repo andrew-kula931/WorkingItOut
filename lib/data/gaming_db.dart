@@ -32,7 +32,7 @@ class RecentGames {
 }
 
 @HiveType(typeId: 12)
-class GameGoals {
+class GameGoals extends HiveObject{
   @HiveField(0)
   late String name;
 

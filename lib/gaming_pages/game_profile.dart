@@ -12,10 +12,60 @@ class GameProfile extends StatefulWidget {
 }
 
 class _GameProfileState extends State<GameProfile> {
+  late List<GameGoals> goalsList;
+  late List<TextEditingController> nameControllers;
+  late List<TextEditingController> descriptionControllers;
+  late List<List<TextEditingController>> subpointsControllers;
+
+  @override
+  void initState() {
+    super.initState();
+    refreshGoals();
+  }
+
+  void refreshGoals() {
+    goalsList = Hive.box('GameGoals').values
+      .where((x) => (x as GameGoals).gameid == widget.index)
+      .cast<GameGoals>()
+      .toList();
+
+    nameControllers = goalsList.map((goal) => TextEditingController(text: goal.name)).toList(); 
+    descriptionControllers = goalsList.map((goal) => TextEditingController(text: goal.description)).toList(); 
+    subpointsControllers = goalsList.map((goal) { 
+      return goal.subpoints.map((text) => TextEditingController(text: text)).toList();
+    }).toList(); 
+  }
+
+  @override 
+  void dispose() {
+    for (var controller in nameControllers) {
+      controller.dispose();
+    }
+    for (var controller in descriptionControllers) {
+      controller.dispose();
+    }
+    for (var subpoints in subpointsControllers) {
+      for (var controller in subpoints) {
+        controller.dispose();
+      }
+    }
+    super.dispose();
+  }
+
+  void updateGoal(int index) {
+    setState(() {
+      var goal = goalsList[index];
+      goal.name = nameControllers[index].text;
+      goal.description = descriptionControllers[index].text;
+      goal.subpoints = subpointsControllers[index].map((controller) => controller.text).toList();
+      goal.save();
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    var goalsList = Hive.box('GameGoals').values.where((x) => x.gameid == widget.index);
+    var goalsList = Hive.box('GameGoals').values.where((x) => (x).gameid == widget.index).toList();
     return Scaffold (
       appBar: AppBar(
         title: Center(
@@ -44,11 +94,13 @@ class _GameProfileState extends State<GameProfile> {
             child: ElevatedButton(
               onPressed: () async {
                 var data = GameGoals (
-                  name: 'Goal Name',
+                  name: '',
                   gameid: widget.index
                 );
                 await Hive.box('GameGoals').add(data);
-                setState(() {});
+                setState(() {
+                  refreshGoals();
+                });
               },
               child: const Text('Add Goal')
             )
@@ -59,13 +111,71 @@ class _GameProfileState extends State<GameProfile> {
             child: ListView.builder(
               itemCount: goalsList.length,
               itemBuilder: (context, index) {
-                var goal = goalsList.elementAt(index);
                 return Container(
-
-                  //Now turn this into the goal card of my dreams
-
                   decoration: BoxDecoration(color: Colors.orangeAccent.shade700),
-                  child: Text(goal.name)
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: TextField(
+                          controller: nameControllers[index],
+                          decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+                          onChanged:(value) {
+                            updateGoal(index);
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 500,
+                        child: TextField(
+                          controller: descriptionControllers[index],
+                          decoration: const InputDecoration(labelText: 'About Goal', border: OutlineInputBorder()),
+                          onChanged:(value) {
+                            updateGoal(index);
+                          }
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(left: 30, top: 10, bottom: 10, right: 10),
+                        child: SizedBox(
+                          height: 200,
+                          width: 600,
+                          child: ListView.builder(
+                            itemCount: subpointsControllers[index].length,
+                            itemBuilder: (context, innerIndex) {
+                              return Column(
+                                children: [
+                                  SizedBox(
+                                    width: 600,
+                                    child: TextField(
+                                      controller: subpointsControllers[index][innerIndex],
+                                      decoration: const InputDecoration(labelText: 'Subpoint', border: OutlineInputBorder()),
+                                      onChanged: (value) {
+                                        updateGoal(index);
+                                      }
+                                    ),
+                                  ),
+                                ]
+                              );
+                            }
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          subpointsControllers[index]
+                            .add(TextEditingController(text: ''));
+                          goalsList[index].subpoints.add('');
+                          updateGoal(index);
+                        },
+                        tooltip: 'New Subpoint',
+                        icon: const Icon(Icons.add),
+                      ),
+
+                    ],
+                  )
                 );
               }
             ),
