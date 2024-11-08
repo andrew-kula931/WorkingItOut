@@ -176,7 +176,7 @@ class _GameProfileState extends State<GameProfile> {
                                         width: MediaQuery.of(context).size.width * .7,
                                         child: TextField(
                                           controller: subpointsControllers[index][innerIndex],
-                                          decoration: const InputDecoration(),
+                                          decoration: const InputDecoration(border: InputBorder.none),
                                           onChanged: (value) {
                                             updateGoal(index);
                                           }
