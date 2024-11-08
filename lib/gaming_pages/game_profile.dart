@@ -16,6 +16,7 @@ class _GameProfileState extends State<GameProfile> {
   late List<TextEditingController> nameControllers;
   late List<TextEditingController> descriptionControllers;
   late List<List<TextEditingController>> subpointsControllers;
+  late List<List<bool>> crossedOutSubpoints;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _GameProfileState extends State<GameProfile> {
     subpointsControllers = goalsList.map((goal) { 
       return goal.subpoints.map((text) => TextEditingController(text: text)).toList();
     }).toList(); 
+    crossedOutSubpoints = goalsList.map((goal) => List.filled(goal.subpoints.length, false)).toList();
   }
 
   @override 
@@ -97,7 +99,11 @@ class _GameProfileState extends State<GameProfile> {
                   name: '',
                   gameid: widget.index
                 );
-                await Hive.box('GameGoals').add(data);
+                var box = Hive.box('GameGoals');
+                await box.add(data);
+                await box.close();
+                await Hive.openBox('GameGoals');
+                
                 setState(() {
                   refreshGoals();
                 });
@@ -147,15 +153,36 @@ class _GameProfileState extends State<GameProfile> {
                             itemBuilder: (context, innerIndex) {
                               return Column(
                                 children: [
-                                  SizedBox(
-                                    width: 600,
-                                    child: TextField(
-                                      controller: subpointsControllers[index][innerIndex],
-                                      decoration: const InputDecoration(labelText: 'Subpoint', border: OutlineInputBorder()),
-                                      onChanged: (value) {
-                                        updateGoal(index);
-                                      }
-                                    ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          crossedOutSubpoints[index][innerIndex]
+                                            ? Icons.check_box
+                                            : Icons.check_box_outline_blank,
+                                          color: crossedOutSubpoints[index][innerIndex]
+                                            ? Colors.lightGreen
+                                            : Colors.grey,
+                                          size: 30.0
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            crossedOutSubpoints[index][innerIndex] = 
+                                              !crossedOutSubpoints[index][innerIndex];
+                                          });
+                                        } 
+                                      ),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width * .7,
+                                        child: TextField(
+                                          controller: subpointsControllers[index][innerIndex],
+                                          decoration: const InputDecoration(),
+                                          onChanged: (value) {
+                                            updateGoal(index);
+                                          }
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ]
                               );
@@ -169,11 +196,11 @@ class _GameProfileState extends State<GameProfile> {
                             .add(TextEditingController(text: ''));
                           goalsList[index].subpoints.add('');
                           updateGoal(index);
+                          refreshGoals();
                         },
                         tooltip: 'New Subpoint',
                         icon: const Icon(Icons.add),
                       ),
-
                     ],
                   )
                 );

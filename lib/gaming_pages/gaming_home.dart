@@ -60,7 +60,7 @@ class _GamingHomeState extends State<GamingHome> {
                         child: Container(
                           color: const Color.fromARGB(99, 46, 33, 129),
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
+                            padding: const EdgeInsets.only(bottom: 2, left: 2, right: 2),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
