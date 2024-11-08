@@ -176,6 +176,9 @@ class _GameProfileState extends State<GameProfile> {
                                         width: MediaQuery.of(context).size.width * .7,
                                         child: TextField(
                                           controller: subpointsControllers[index][innerIndex],
+                                          style: TextStyle(decoration: crossedOutSubpoints[index][innerIndex]
+                                            ? TextDecoration.lineThrough
+                                            : TextDecoration.none),
                                           decoration: const InputDecoration(border: InputBorder.none),
                                           onChanged: (value) {
                                             updateGoal(index);
