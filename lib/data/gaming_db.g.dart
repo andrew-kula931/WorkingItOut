@@ -95,13 +95,14 @@ class GameGoalsAdapter extends TypeAdapter<GameGoals> {
       description: fields[1] as String,
       subpoints: (fields[2] as List).cast<String>(),
       gameid: fields[3] as int,
+      checkValues: (fields[4] as List).cast<bool>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, GameGoals obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -109,7 +110,9 @@ class GameGoalsAdapter extends TypeAdapter<GameGoals> {
       ..writeByte(2)
       ..write(obj.subpoints)
       ..writeByte(3)
-      ..write(obj.gameid);
+      ..write(obj.gameid)
+      ..writeByte(4)
+      ..write(obj.checkValues);
   }
 
   @override

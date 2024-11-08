@@ -34,8 +34,8 @@ class _GameProfileState extends State<GameProfile> {
     descriptionControllers = goalsList.map((goal) => TextEditingController(text: goal.description)).toList(); 
     subpointsControllers = goalsList.map((goal) { 
       return goal.subpoints.map((text) => TextEditingController(text: text)).toList();
-    }).toList(); 
-    crossedOutSubpoints = goalsList.map((goal) => List.filled(goal.subpoints.length, false)).toList();
+    }).toList();
+    crossedOutSubpoints = goalsList.map((goal) => goal.checkValues).toList();
   }
 
   @override 
@@ -60,6 +60,7 @@ class _GameProfileState extends State<GameProfile> {
       goal.name = nameControllers[index].text;
       goal.description = descriptionControllers[index].text;
       goal.subpoints = subpointsControllers[index].map((controller) => controller.text).toList();
+      goal.checkValues = crossedOutSubpoints[index];
       goal.save();
     });
   }
@@ -113,98 +114,128 @@ class _GameProfileState extends State<GameProfile> {
           ),
           const Text('Goals'),
           SizedBox(
-            height: MediaQuery.of(context).size.height * .6,
+            height: MediaQuery.of(context).size.height * .75,
             child: ListView.builder(
               itemCount: goalsList.length,
               itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(color: Colors.orangeAccent.shade700),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        child: TextField(
-                          controller: nameControllers[index],
-                          decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
-                          onChanged:(value) {
-                            updateGoal(index);
-                          },
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 6, left: 10, right: 10),
+                  child: Container(
+                    decoration: BoxDecoration(color: Colors.orangeAccent.shade700),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              SizedBox(
+                                width: 400,
+                                child: TextField(
+                                  controller: nameControllers[index],
+                                  decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+                                  onChanged:(value) {
+                                    updateGoal(index);
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.grey, size: 30.0),
+                                onPressed:() async {
+                                  GameGoals removedGoal = goalsList.removeAt(index);
+                                  await removedGoal.delete();
+                                  refreshGoals();
+                                  setState(() {});
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 500,
-                        child: TextField(
-                          controller: descriptionControllers[index],
-                          decoration: const InputDecoration(labelText: 'About Goal', border: OutlineInputBorder()),
-                          onChanged:(value) {
-                            updateGoal(index);
-                          }
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 30, top: 10, bottom: 10, right: 10),
-                        child: SizedBox(
-                          height: 200,
-                          width: 600,
-                          child: ListView.builder(
-                            itemCount: subpointsControllers[index].length,
-                            itemBuilder: (context, innerIndex) {
-                              return Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          crossedOutSubpoints[index][innerIndex]
-                                            ? Icons.check_box
-                                            : Icons.check_box_outline_blank,
-                                          color: crossedOutSubpoints[index][innerIndex]
-                                            ? Colors.lightGreen
-                                            : Colors.grey,
-                                          size: 30.0
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            crossedOutSubpoints[index][innerIndex] = 
-                                              !crossedOutSubpoints[index][innerIndex];
-                                          });
-                                        } 
-                                      ),
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width * .7,
-                                        child: TextField(
-                                          controller: subpointsControllers[index][innerIndex],
-                                          style: TextStyle(decoration: crossedOutSubpoints[index][innerIndex]
-                                            ? TextDecoration.lineThrough
-                                            : TextDecoration.none),
-                                          decoration: const InputDecoration(border: InputBorder.none),
-                                          onChanged: (value) {
-                                            updateGoal(index);
-                                          }
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ]
-                              );
+                        Container(
+                          padding: const EdgeInsets.only(left: 8),
+                          width: 500,
+                          child: TextField(
+                            controller: descriptionControllers[index],
+                            decoration: const InputDecoration(labelText: 'About Goal', border: OutlineInputBorder()),
+                            onChanged:(value) {
+                              updateGoal(index);
                             }
                           ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          subpointsControllers[index]
-                            .add(TextEditingController(text: ''));
-                          goalsList[index].subpoints.add('');
-                          updateGoal(index);
-                          refreshGoals();
-                        },
-                        tooltip: 'New Subpoint',
-                        icon: const Icon(Icons.add),
-                      ),
-                    ],
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30, top: 10, bottom: 10, right: 10),
+                          child: SizedBox(
+                            height: subpointsControllers[index].length * 48,
+                            width: 600,
+                            child: ListView.builder(
+                              itemCount: subpointsControllers[index].length,
+                              itemBuilder: (context, innerIndex) {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(
+                                            crossedOutSubpoints[index][innerIndex]
+                                              ? Icons.check_box
+                                              : Icons.check_box_outline_blank,
+                                            color: crossedOutSubpoints[index][innerIndex]
+                                              ? Colors.lightGreen
+                                              : Colors.grey,
+                                            size: 25.0
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              crossedOutSubpoints[index][innerIndex] = 
+                                                !crossedOutSubpoints[index][innerIndex];
+                                            });
+                                          } 
+                                        ),
+                                        SizedBox(
+                                          width: MediaQuery.of(context).size.width * .7,
+                                          child: TextField(
+                                            controller: subpointsControllers[index][innerIndex],
+                                            style: TextStyle(decoration: crossedOutSubpoints[index][innerIndex]
+                                              ? TextDecoration.lineThrough
+                                              : TextDecoration.none),
+                                            decoration: const InputDecoration(border: InputBorder.none),
+                                            onChanged: (value) {
+                                              updateGoal(index);
+                                            }
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.grey, size: 20.0),
+                                          onPressed: () {
+                                            subpointsControllers[index].removeAt(innerIndex);
+                                            crossedOutSubpoints[index].removeAt(innerIndex);
+                                            updateGoal(index);
+                                          }
+                                        ),
+                                      ],
+                                    ),
+                                  ]
+                                );
+                              }
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            subpointsControllers[index]
+                              .add(TextEditingController(text: ''));
+                            crossedOutSubpoints[index].add(false);
+                            updateGoal(index);
+                            refreshGoals();
+                          },
+                          tooltip: 'New Subpoint',
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    )
                   )
                 );
               }

@@ -45,9 +45,13 @@ class GameGoals extends HiveObject{
   @HiveField(3)
   late int gameid;
 
+  @HiveField(4)
+  List<bool> checkValues;
+
   GameGoals({
     required this.name,
     this.description = '',
     this.subpoints = const [],
-    required this.gameid});
+    required this.gameid,
+    this.checkValues = const[]});
 }
