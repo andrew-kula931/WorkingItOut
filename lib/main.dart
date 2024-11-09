@@ -125,6 +125,21 @@ class _WorkoutAppState extends State<WorkoutApp> {
     }
   }
 
+  void _closeGameBoxes() async {
+    if(Hive.isBoxOpen('Games')) {
+      Box games = Hive.box('Games');
+      await games.close();
+    }
+    if(Hive.isBoxOpen('RecentGames')) {
+      Box recents = Hive.box('RecentGames');
+      await recents.close();
+    }
+    if(Hive.isBoxOpen('GameGoals')) {
+      Box goals = Hive.box('GameGoals');
+      await goals.close();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -274,7 +289,10 @@ class _WorkoutAppState extends State<WorkoutApp> {
                             await Hive.openBox('GameGoals');
                           }
                           // ignore: use_build_context_synchronously
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()))
+                          .then((value) {
+                            _closeGameBoxes();
+                          });
                         },
                         child:Container(
                           width: screenWidth * .25,
@@ -307,7 +325,10 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                   }
 
                                   // ignore: use_build_context_synchronously
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()))
+                                  .then((value) {
+                                    _closeGameBoxes();
+                                  });
                                 },
                                 child: MouseRegion(
                                   onEnter: (event) => setState(() => gameListColor = Colors.green),
@@ -340,7 +361,10 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                     var gameLocation = Hive.box('Games').getAt(Hive.box('RecentGames').getAt(0).recents[0]);
                                     // ignore: use_build_context_synchronously
                                     Navigator.push(context, MaterialPageRoute(builder: (context) =>  
-                                      GameProfile(gameInfo: gameLocation, index: Hive.box('RecentGames').getAt(0).recents[0])));
+                                      GameProfile(gameInfo: gameLocation, index: Hive.box('RecentGames').getAt(0).recents[0])))
+                                      .then((value) {
+                                        _closeGameBoxes();
+                                      });
                                   }
                                 },
                                 child: MouseRegion(

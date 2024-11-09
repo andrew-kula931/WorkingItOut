@@ -70,13 +70,30 @@ class _GameProfileState extends State<GameProfile> {
   Widget build(BuildContext context) {
     var goalsList = Hive.box('GameGoals').values.where((x) => (x).gameid == widget.index).toList();
     return Scaffold (
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Center(
-          child: Text(widget.gameInfo.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: const Color.fromARGB(223, 3, 48, 145),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              color: Colors.transparent,
+              height: 1,
+              width: 1),
+            Text(widget.gameInfo.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),   
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              onPressed: () {
+                //Add edit menu here
+              }
+            ),
+          ],
         ),
       ),
       body: Column(
         children: [
+
+          //Top Row with the Game image
           Padding(
             padding: const EdgeInsets.all(10),
             child: Row(
@@ -85,16 +102,22 @@ class _GameProfileState extends State<GameProfile> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width * .7,
-                  child: Text(widget.gameInfo.description, style: const TextStyle(fontSize: 18)),
+                  child: Text(widget.gameInfo.description, style: const TextStyle(fontSize: 18, color: Colors.white)),
                 ),
                 if (widget.gameInfo.imageBytes != null)
                   Image.memory(widget.gameInfo.imageBytes!),
               ],
             ),
           ),
+
+          //Add game button
           Padding(
             padding: const EdgeInsets.all(6),
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(223, 3, 48, 145),
+              ),
               onPressed: () async {
                 var data = GameGoals (
                   name: '',
@@ -112,16 +135,18 @@ class _GameProfileState extends State<GameProfile> {
               child: const Text('Add Goal')
             )
           ),
-          const Text('Goals'),
+          const Text('Goals', style: TextStyle(color: Colors.white)),
+
+          //List of goals
           SizedBox(
-            height: MediaQuery.of(context).size.height * .75,
+            height: MediaQuery.of(context).size.height * .68,
             child: ListView.builder(
               itemCount: goalsList.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 6, left: 10, right: 10),
                   child: Container(
-                    decoration: BoxDecoration(color: Colors.orangeAccent.shade700),
+                    decoration: const BoxDecoration(color: Color.fromARGB(209, 4, 13, 141)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -131,16 +156,21 @@ class _GameProfileState extends State<GameProfile> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisSize: MainAxisSize.max,
                             children: [
+
+                              //Name textfield
                               SizedBox(
                                 width: 400,
                                 child: TextField(
                                   controller: nameControllers[index],
-                                  decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder(),),
                                   onChanged:(value) {
                                     updateGoal(index);
                                   },
                                 ),
                               ),
+
+                              //Delete goal button
                               IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.grey, size: 30.0),
                                 onPressed:() async {
@@ -153,11 +183,14 @@ class _GameProfileState extends State<GameProfile> {
                             ],
                           ),
                         ),
+
+                        //Description textfield
                         Container(
                           padding: const EdgeInsets.only(left: 8),
                           width: 500,
                           child: TextField(
                             controller: descriptionControllers[index],
+                            style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(labelText: 'About Goal', border: OutlineInputBorder()),
                             onChanged:(value) {
                               updateGoal(index);
@@ -165,6 +198,7 @@ class _GameProfileState extends State<GameProfile> {
                           ),
                         ),
 
+                        //Subpoints
                         Padding(
                           padding: const EdgeInsets.only(left: 30, top: 10, bottom: 10, right: 10),
                           child: SizedBox(
@@ -177,6 +211,8 @@ class _GameProfileState extends State<GameProfile> {
                                   children: [
                                     Row(
                                       children: [
+
+                                        //Checkbox for subpoint
                                         IconButton(
                                           icon: Icon(
                                             crossedOutSubpoints[index][innerIndex]
@@ -194,19 +230,24 @@ class _GameProfileState extends State<GameProfile> {
                                             });
                                           } 
                                         ),
+
+                                        //Subpoint textfield
                                         SizedBox(
                                           width: MediaQuery.of(context).size.width * .7,
                                           child: TextField(
                                             controller: subpointsControllers[index][innerIndex],
                                             style: TextStyle(decoration: crossedOutSubpoints[index][innerIndex]
                                               ? TextDecoration.lineThrough
-                                              : TextDecoration.none),
+                                              : TextDecoration.none,
+                                              color: Colors.white),
                                             decoration: const InputDecoration(border: InputBorder.none),
                                             onChanged: (value) {
                                               updateGoal(index);
                                             }
                                           ),
                                         ),
+
+                                        //Delete subpoint button
                                         IconButton(
                                           icon: const Icon(Icons.delete, color: Colors.grey, size: 20.0),
                                           onPressed: () {
@@ -223,6 +264,8 @@ class _GameProfileState extends State<GameProfile> {
                             ),
                           ),
                         ),
+
+                        //Add subpoint button
                         IconButton(
                           onPressed: () {
                             subpointsControllers[index]

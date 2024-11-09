@@ -44,76 +44,79 @@ class _AddGameState extends State<AddGame> {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight (
-      child: ConstrainedBox (
-        constraints: const BoxConstraints(
-          maxHeight: 1000,
-          minHeight: 600,
-        ),
+    return Container (
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: const Color.fromARGB(255, 3, 29, 85),),
+      child: IntrinsicHeight( 
         child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20, top: 10),
-                    child: TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20, top: 10),
+                      child: TextField(
+                      controller: _nameController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+                      ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _pickFile();
-                  },
+                  GestureDetector(
+                    onTap: () {
+                      _pickFile();
+                    },
 
-                  //Addable image slot here
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: _imageBytes == null ? Container(
-                      width: 180,
-                      height: 180,
-                      color: const Color.fromARGB(255, 196, 193, 193),
-                      child: const Center( 
-                        child: Text('Add Image')
-                      ) 
-                    ) : Image.memory(_imageBytes!),
+                    //Addable image slot here
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: _imageBytes == null ? Container(
+                        width: 180,
+                        height: 180,
+                        color: const Color.fromARGB(255, 196, 193, 193),
+                        child: const Center( 
+                          child: Text('Add Image')
+                        ) 
+                      ) : Image.memory(_imageBytes!),
+                    )
                   )
-                )
-              ],
-            ),
-            SizedBox(
-              width: 500,
-              child: TextField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder()),
-                maxLines: 10,
-                minLines: 3,
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: ElevatedButton(
-                onPressed: () async {
-                  var box = Hive.box('Games');
-                  var gameData = GamesDb(
-                    name: _nameController.text,
-                    description: _descriptionController.text,
-                    imageBytes: _imageBytes,
-                  );
-                  await box.add(gameData);
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context);
-                },
-                child: const Text('Add Game'),
+              SizedBox(
+                width: 500,
+                child: TextField(
+                  controller: _descriptionController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder()),
+                  maxLines: 10,
+                  minLines: 3,
+                ),
               ),
-            ),
-          ],
-        ),
-      )
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(223, 3, 48, 145),
+                  ),
+                  onPressed: () async {
+                    var box = Hive.box('Games');
+                    var gameData = GamesDb(
+                      name: _nameController.text,
+                      description: _descriptionController.text,
+                      imageBytes: _imageBytes,
+                    );
+                    await box.add(gameData);
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Add Game'),
+                ),
+              ),
+            ],
+          ),
+        )
     );
   }
 }

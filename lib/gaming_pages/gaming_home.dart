@@ -14,13 +14,29 @@ class _GamingHomeState extends State<GamingHome> {
   var games = Hive.box('Games');
   var recentsBox = Hive.box('RecentGames');
   var gameGoals = Hive.box('GameGoals');
+  
+  get height => null;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Center(
-          child: Text('Game Plan')
+        backgroundColor: const Color.fromARGB(223, 3, 48, 145),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              color: Colors.transparent,
+              height: 1,
+              width: 1),
+            const Text('Game Plan', style: TextStyle(color: Colors.white)),
+            Container(
+              color: Colors.transparent,
+              width: 41,
+              height: 1
+            )
+          ],
         ),
       ),
       body: Column (
@@ -36,7 +52,7 @@ class _GamingHomeState extends State<GamingHome> {
                 height: 175,
                 width: MediaQuery.of(context).size.width * 0.2,
                 child: const Center(
-                  child: Text('Recently Played', style: TextStyle(fontSize: 20)))
+                  child: Text('Recently Played', style: TextStyle(fontSize: 20, color: Colors.white)))
               ),
               
               //Dynamic list of recently played games
@@ -86,6 +102,10 @@ class _GamingHomeState extends State<GamingHome> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(223, 3, 48, 145),
+              ),
               onPressed: () {
                 showModalBottomSheet(
                   context: context, 
@@ -98,10 +118,14 @@ class _GamingHomeState extends State<GamingHome> {
               child: const Text('Add Game')
             ),
           ),
+
+          //Title above list
           const Padding(
             padding: EdgeInsets.only(top: 5),
-            child: Text('Games', style: TextStyle(fontSize: 20)),
+            child: Text('Games', style: TextStyle(fontSize: 20, color: Colors.white)),
           ),
+
+          //Actual List
           Padding(
             padding: const EdgeInsets.all(10),
             child: SizedBox(
@@ -143,7 +167,7 @@ class _GamingHomeState extends State<GamingHome> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(item.name),
+                            Text(item.name,style: const TextStyle(color: Colors.white)),
                             item.imageBytes != null ?
                               Expanded(
                                 child: Image.memory(
