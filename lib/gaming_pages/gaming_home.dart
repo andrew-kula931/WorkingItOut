@@ -68,7 +68,7 @@ class _GamingHomeState extends State<GamingHome> {
                       padding: const EdgeInsets.all(4),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: recentGame, index: recentsBox.getAt(0).recents[index])))
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(index: recentsBox.getAt(0).recents[index])))
                           .then((value) {
                             setState(() {});
                           });
@@ -80,7 +80,7 @@ class _GamingHomeState extends State<GamingHome> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(recentGame.name),
+                                Text(recentGame.name, style: const TextStyle(color: Colors.white)),
                                 recentGame.imageBytes != null ?
                                   Image.memory(
                                     recentGame!.imageBytes!,
@@ -155,7 +155,7 @@ class _GamingHomeState extends State<GamingHome> {
                       //Save changes
                       await recentsBox.putAt(0, recent);
                       // ignore: use_build_context_synchronously
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(gameInfo: item, index: index)))
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => GameProfile(index: index)))
                       .then((value) {
                         setState(() {});
                       });

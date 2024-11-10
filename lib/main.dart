@@ -361,7 +361,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                     var gameLocation = Hive.box('Games').getAt(Hive.box('RecentGames').getAt(0).recents[0]);
                                     // ignore: use_build_context_synchronously
                                     Navigator.push(context, MaterialPageRoute(builder: (context) =>  
-                                      GameProfile(gameInfo: gameLocation, index: Hive.box('RecentGames').getAt(0).recents[0])))
+                                      GameProfile(index: Hive.box('RecentGames').getAt(0).recents[0])))
                                       .then((value) {
                                         _closeGameBoxes();
                                       });

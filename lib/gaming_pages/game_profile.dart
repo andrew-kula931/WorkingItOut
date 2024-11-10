@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../data/gaming_db.dart';
+import '../gaming_components/edit_game.dart';
 
-class GameProfile extends StatefulWidget {
-  final GamesDb gameInfo;
+class GameProfile extends StatefulWidget { 
   final int index;
-  const GameProfile({super.key, required this.gameInfo, required this.index});
+  const GameProfile({super.key, required this.index});
 
   @override
   State<GameProfile> createState() => _GameProfileState();
@@ -17,10 +17,12 @@ class _GameProfileState extends State<GameProfile> {
   late List<TextEditingController> descriptionControllers;
   late List<List<TextEditingController>> subpointsControllers;
   late List<List<bool>> crossedOutSubpoints;
+  late GamesDb gameInfo;
 
   @override
   void initState() {
     super.initState();
+    gameInfo = Hive.box('Games').getAt(widget.index);
     refreshGoals();
   }
 
@@ -80,11 +82,19 @@ class _GameProfileState extends State<GameProfile> {
               color: Colors.transparent,
               height: 1,
               width: 1),
-            Text(widget.gameInfo.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),   
+            Text(gameInfo.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),   
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.white),
               onPressed: () {
-                //Add edit menu here
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return EditGame(index: widget.index);
+                  },
+                ).then((value) {
+                  gameInfo = Hive.box('Games').getAt(widget.index);
+                  setState(() {});
+                });
               }
             ),
           ],
@@ -102,10 +112,10 @@ class _GameProfileState extends State<GameProfile> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width * .7,
-                  child: Text(widget.gameInfo.description, style: const TextStyle(fontSize: 18, color: Colors.white)),
+                  child: Text(gameInfo.description, style: const TextStyle(fontSize: 18, color: Colors.white)),
                 ),
-                if (widget.gameInfo.imageBytes != null)
-                  Image.memory(widget.gameInfo.imageBytes!),
+                if (gameInfo.imageBytes != null)
+                  Image.memory(gameInfo.imageBytes!),
               ],
             ),
           ),
