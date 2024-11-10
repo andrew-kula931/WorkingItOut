@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import 'dart:io';
 import '../data/gaming_db.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:file_picker/file_picker.dart';
@@ -18,7 +19,7 @@ class _AddGameState extends State<AddGame> {
   Uint8List? _imageBytes;
 
   //Function for adding box info
-  Future<Uint8List?> _pickFile() async {
+  Future<Uint8List?> _pickFileEdge() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.image);
 
     if (result != null) {
@@ -37,6 +38,34 @@ class _AddGameState extends State<AddGame> {
           });
           return resizedImageBytes;
         }
+      }
+    }
+    return null;
+  }
+
+    Future<Uint8List?> _pickFileWindows() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.image);
+
+    if (result != null) {
+      final filePath = result.files.single.path;
+
+      if (filePath != null) {
+        final file = await File(filePath).readAsBytes();
+        final img.Image? image = img.decodeImage(file);
+
+        if (image != null) {
+          final img.Image resizedImage = img.copyResize(image, width: 150, height: 150);
+          final Uint8List resizedImageBytes = Uint8List.fromList(img.encodePng(resizedImage));
+          setState(() {
+            _imageBytes = resizedImageBytes;
+          });
+          return resizedImageBytes;
+        }
+
+        setState(() {
+          _imageBytes = file;
+        });
+        return file;
       }
     }
     return null;
@@ -65,7 +94,14 @@ class _AddGameState extends State<AddGame> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      _pickFile();
+                      try {
+                        if (Platform.isWindows) {
+                          _pickFileWindows();
+                        }
+                      } catch (e) {
+                        _pickFileEdge();
+                      }
+                      
                     },
 
                     //Addable image slot here
