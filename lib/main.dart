@@ -19,6 +19,7 @@ void main() async {
   Hive.registerAdapter(WorkoutDocAdapter());
 
   Hive.registerAdapter(WorkoutScheduleAdapter());
+  await Hive.openBox('WorkoutSchedule');
 
   Hive.registerAdapter(WorkoutNotesAdapter());
 
@@ -76,6 +77,18 @@ class _WorkoutAppState extends State<WorkoutApp> {
   bool orgMenu = false;
   bool funMenu = false;
 
+  //Time set up variables for this week
+  final DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
+  final DateTime twoDaysLater = DateTime.now().add(const Duration(days: 2));
+  late List<dynamic> scheduledWorkouts;
+
+  @override
+  void initState() {
+    super.initState();
+    scheduledWorkouts = Hive.box('WorkoutSchedule').values
+      .where((x) => (x.day.isAfter(yesterday) && x.day.isBefore(twoDaysLater))).toList();
+  }
+
   @override
   void dispose() {
     Hive.close();
@@ -115,14 +128,20 @@ class _WorkoutAppState extends State<WorkoutApp> {
       Box workoutDoc = Hive.box('WorkoutDoc');
       await workoutDoc.close();
     }
-    if(Hive.isBoxOpen('WorkoutSchedule')) {
-      Box workoutSchedule = Hive.box('WorkoutSchedule');
-      await workoutSchedule.close();
-    }
     if(Hive.isBoxOpen('WorkoutNotes')) {
       Box workoutNotes = Hive.box('WorkoutNotes');
       await workoutNotes.close();
     }
+
+    scheduledWorkouts = Hive.box('WorkoutSchedule').values
+      .where((x) => (x.day.isAfter(yesterday) && x.day.isBefore(twoDaysLater))).toList();
+
+    if(Hive.isBoxOpen('WorkoutSchedule')) {
+      Box workoutSchedule = Hive.box('WorkoutSchedule');
+      await workoutSchedule.close();
+    }
+    
+    setState(() {});
   }
 
   void _closeGameBoxes() async {
@@ -172,7 +191,10 @@ class _WorkoutAppState extends State<WorkoutApp> {
                   child: const Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text('Events', style: TextStyle(fontSize: 20)),
+                      Padding(
+                        padding: EdgeInsets.only(left:4, right: 4),
+                        child: Text('Events', style: TextStyle(fontSize: 20)),
+                      ),
                     ],
                   ),
                 ),
@@ -184,7 +206,10 @@ class _WorkoutAppState extends State<WorkoutApp> {
                   child: const Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text('Goals', style: TextStyle(fontSize: 20)),
+                      Padding(
+                        padding: EdgeInsets.only(left:4, right: 4),
+                        child: Text('Goals', style: TextStyle(fontSize: 20)),
+                      ),
                     ],
                   ),
                 ),
@@ -193,10 +218,33 @@ class _WorkoutAppState extends State<WorkoutApp> {
                 Container(
                   margin: const EdgeInsets.only(left: 20, right: 20),
                   decoration: const BoxDecoration(color: Colors.lightGreen),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text('Workouts', style: TextStyle(fontSize: 20)),
+                      const Padding(
+                        padding: EdgeInsets.only(left:4, right: 4),
+                        child: Text('Workouts', style: TextStyle(fontSize: 20)),
+                      ),
+                      SizedBox(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width * .8,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: scheduledWorkouts.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              color: Colors.green,
+                              width: 80,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(scheduledWorkouts[index].name)
+                                ],
+                              )
+                            );
+                          }
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -358,7 +406,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
 
                                   var recentGameBox = Hive.box('RecentGames').getAt(0);
                                   if (recentGameBox != null && recentGameBox.recents.isNotEmpty) {
-                                    var gameLocation = Hive.box('Games').getAt(Hive.box('RecentGames').getAt(0).recents[0]);
                                     // ignore: use_build_context_synchronously
                                     Navigator.push(context, MaterialPageRoute(builder: (context) =>  
                                       GameProfile(index: Hive.box('RecentGames').getAt(0).recents[0])))

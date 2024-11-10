@@ -18,6 +18,7 @@ class WNotesListState extends State<WNotesList> {
       children: [
         const Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Text('Notes', style: TextStyle(fontSize: 20)),
           ],

@@ -45,9 +45,9 @@ class _AddGameState extends State<AddGame> {
   @override
   Widget build(BuildContext context) {
     return Container (
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: const Color.fromARGB(255, 3, 29, 85),),
-      child: IntrinsicHeight( 
+      decoration: const BoxDecoration(color:  Color.fromARGB(255, 3, 29, 85),),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,10 +57,10 @@ class _AddGameState extends State<AddGame> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20, top: 10),
                       child: TextField(
-                      controller: _nameController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
-                      ),
+                        controller: _nameController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+                        ),
                     ),
                   ),
                   GestureDetector(
@@ -116,7 +116,7 @@ class _AddGameState extends State<AddGame> {
               ),
             ],
           ),
-        )
+        
     );
   }
 }

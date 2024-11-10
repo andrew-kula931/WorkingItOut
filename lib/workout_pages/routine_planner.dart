@@ -68,6 +68,7 @@ class _RoutinePlannerState extends State<RoutinePlanner> {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     List<DateTime> weekDays = List.generate(7, (index) => now.add(Duration(days: index)));
+    DateTime yesterday = now.subtract(const Duration(days: 1));
 
     return Scaffold(
       appBar: AppBar(
@@ -75,14 +76,32 @@ class _RoutinePlannerState extends State<RoutinePlanner> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(5),
-            child: ElevatedButton(
-              onPressed: () {
-                _getWorkout();
-              },
-              child: const Text('Schedule Workout'),
-            )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _getWorkout();
+                  },
+                  child: const Text('Schedule Workout'),
+                )
+              ),
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    for (var item in scheduleBox.values) {
+                      if (item.day.isBefore(yesterday)) {
+                        await scheduleBox.delete(item);
+                      }
+                    }
+                  },
+                  child: const Text('Clear Cache')
+                )
+              )
+            ],
           ),
 
           //This is the week list

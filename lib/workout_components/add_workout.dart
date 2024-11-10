@@ -28,11 +28,9 @@ class _AddWorkoutState extends State<AddWorkout> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return IntrinsicHeight(
       child: Container(
-        width: screenWidth,
+        width: MediaQuery.of(context).size.width,
         margin: const EdgeInsets.all(10),
         child: Column(
           children: [

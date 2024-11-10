@@ -72,61 +72,64 @@ class _WorkoutNotesClassState extends State<WorkoutNotesClass> {
               minLines: 5,
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  if(widget.index >= 0) {
-                    var box = Hive.box('WorkoutNotes').getAt(widget.index);
-                    box.name = _textField;
-                    box.note = _notesField;
-                  } else {
-                    var changedBox = Hive.box('WorkoutNotes');
-                    WorkoutNotes data = WorkoutNotes(
-                      name: _textField.text,
-                      note: _notesField.text,
-                    );
-                    await changedBox.add(data);
-                  }
-                  
-                  //Get rid of old bottom sheet
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context);
-
-                  //Open new one
-                  showModalBottomSheet(
-                    // ignore: use_build_context_synchronously
-                    context: context,
-                    builder: (context) {
-                      return WNotesList(notesList: widget.notesList);
-                    }
-                  );
-                }, 
-                child: const Text('Save')
-              ),
-              if (widget.index >= 0)
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
                 ElevatedButton(
                   onPressed: () async {
-                    var badBox = Hive.box('WorkoutNotes');
-                    badBox.deleteAt(widget.index);
-
-                    //Get rid of current bottom sheet
+                    if(widget.index >= 0) {
+                      var box = Hive.box('WorkoutNotes').getAt(widget.index);
+                      box.name = _textField;
+                      box.note = _notesField;
+                    } else {
+                      var changedBox = Hive.box('WorkoutNotes');
+                      WorkoutNotes data = WorkoutNotes(
+                        name: _textField.text,
+                        note: _notesField.text,
+                      );
+                      await changedBox.add(data);
+                    }
+                    
+                    //Get rid of old bottom sheet
                     // ignore: use_build_context_synchronously
                     Navigator.pop(context);
 
                     //Open new one
                     showModalBottomSheet(
-                    // ignore: use_build_context_synchronously
-                    context: context,
-                    builder: (context) {
-                      return WNotesList(notesList: widget.notesList);
-                    }
-                  );
-                  },
-                  child: const Text('Delete'),
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      builder: (context) {
+                        return WNotesList(notesList: widget.notesList);
+                      }
+                    );
+                  }, 
+                  child: const Text('Save')
                 ),
-            ],
+                if (widget.index >= 0)
+                  ElevatedButton(
+                    onPressed: () async {
+                      var badBox = Hive.box('WorkoutNotes');
+                      badBox.deleteAt(widget.index);
+
+                      //Get rid of current bottom sheet
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+
+                      //Open new one
+                      showModalBottomSheet(
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      builder: (context) {
+                        return WNotesList(notesList: widget.notesList);
+                      }
+                    );
+                    },
+                    child: const Text('Delete'),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
