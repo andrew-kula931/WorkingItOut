@@ -217,6 +217,7 @@ class _WorkoutPage extends State<WorkoutPage> {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
+                    isScrollControlled: true,
                     builder: (context) {
                       return AddWorkout(workoutBox: _workoutBox);
                     },
@@ -230,6 +231,7 @@ class _WorkoutPage extends State<WorkoutPage> {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
+                    isScrollControlled: true,
                     builder: (context) {
                       return WNotesList(notesList: _workoutNotes);
                     }
@@ -259,6 +261,7 @@ class _WorkoutPage extends State<WorkoutPage> {
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
+                        isScrollControlled: true,
                         builder: (context) {
                           return EditWorkout(workoutDb: _workoutBox, index: index, time: false);
                         },

@@ -149,7 +149,7 @@ class _GameProfileState extends State<GameProfile> {
 
           //List of goals
           SizedBox(
-            height: MediaQuery.of(context).size.height * .68,
+            height: MediaQuery.of(context).size.height - 320,
             child: ListView.builder(
               itemCount: goalsList.length,
               itemBuilder: (context, index) {
@@ -213,7 +213,7 @@ class _GameProfileState extends State<GameProfile> {
                           padding: const EdgeInsets.only(left: 30, top: 10, bottom: 10, right: 10),
                           child: SizedBox(
                             height: subpointsControllers[index].length * 48,
-                            width: 600,
+                            width: MediaQuery.of(context).size.width * .85,
                             child: ListView.builder(
                               itemCount: subpointsControllers[index].length,
                               itemBuilder: (context, innerIndex) {

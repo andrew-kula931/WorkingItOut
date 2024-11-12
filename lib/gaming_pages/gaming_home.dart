@@ -127,9 +127,9 @@ class _GamingHomeState extends State<GamingHome> {
 
           //Actual List
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * .58,
+              height: MediaQuery.of(context).size.height - 350,
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 180.0,

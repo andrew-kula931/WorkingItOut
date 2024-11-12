@@ -33,6 +33,7 @@ class _AddWorkoutState extends State<AddWorkout> {
         width: MediaQuery.of(context).size.width,
         margin: const EdgeInsets.all(10),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -103,7 +104,7 @@ class _AddWorkoutState extends State<AddWorkout> {
               Padding(
                 padding: const EdgeInsets.all(4),
                 child: SizedBox(
-                  width: 350,
+                  width: 300,
                   height: 200,
                   child: ListView(
                     children: MUSCLE_GROUPS.map((String item) {

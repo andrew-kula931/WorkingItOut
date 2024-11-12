@@ -7,6 +7,7 @@ import 'workout_pages/workout_archive.dart';
 import 'workout_pages/routine_planner.dart';
 import 'gaming_pages/gaming_home.dart';
 import 'gaming_pages/game_profile.dart';
+import 'fun_pages/spinner.dart';
 
 void main() async {
 
@@ -596,11 +597,27 @@ class _WorkoutAppState extends State<WorkoutApp> {
                           Container(
                             width: screenWidth * .25,
                             decoration: const BoxDecoration(color: Colors.green),
-                            child: const Column (
+                            child: Column (
                               children: [
-                                Text("Solitare"),
-                                Text('Poker'),
-                                Text('Random Wheel'),
+                                const Text("Solitare"),
+                                const Text('Poker'),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SpinningPage()));
+                                  },
+                                  child: MouseRegion(
+                                    onEnter: (event) => setState(() => gameListColor = Colors.green),
+                                    onExit: (event) => setState(() => gameListColor = Colors.lightGreen),
+                                    child: Container (
+                                      decoration: BoxDecoration(color: gameListColor),
+                                      width: MediaQuery.of(context).size.width * .25,
+                                      height: 40,
+                                      child: const Center(
+                                        child: Text("Games List"),
+                                      )
+                                    )
+                                  )
+                                ),
                               ],
                             )
                           ),
