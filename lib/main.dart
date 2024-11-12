@@ -8,6 +8,7 @@ import 'workout_pages/routine_planner.dart';
 import 'gaming_pages/gaming_home.dart';
 import 'gaming_pages/game_profile.dart';
 import 'fun_pages/spinner.dart';
+import 'data/spinner_db.dart';
 
 void main() async {
 
@@ -29,6 +30,8 @@ void main() async {
   Hive.registerAdapter(RecentGamesAdapter());
 
   Hive.registerAdapter(GameGoalsAdapter());
+
+  Hive.registerAdapter(SpinnerDataAdapter());
 
   runApp(const MyApp());
 }
@@ -602,7 +605,13 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                 const Text("Solitare"),
                                 const Text('Poker'),
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    await Hive.openBox('SpinnerData');
+                                    if (Hive.box('SpinnerData').isEmpty) {
+                                      SpinnerData data = SpinnerData(items: ['Nothing yet', 'Still nothing']);
+                                      await Hive.box('SpinnerData').add(data);
+                                    }
+                                    // ignore: use_build_context_synchronously
                                     Navigator.push(context, MaterialPageRoute(builder: (context) => const SpinningPage()));
                                   },
                                   child: MouseRegion(

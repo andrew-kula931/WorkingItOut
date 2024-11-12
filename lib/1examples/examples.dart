@@ -29,3 +29,62 @@
     }).toList();
   }
 */
+
+
+
+
+
+/*
+This is a spinning box with a button to control it
+
+
+late AnimationController _controller;
+bool isSpinning = false;
+
+@override
+void initState() {
+  super.initState();
+  _controller = AnimationController(
+    duration: const Duration(seconds: 1),
+    vsync: this,
+  );
+}
+
+void spinWheel() {
+  setState(() {
+    isSpinning = !isSpinning;
+    if (isSpinning) {
+      _controller.forward().then((_) {
+        setState(() {
+          isSpinning = false;
+          _controller.reset();
+        });
+      });
+    }
+  });
+}
+
+
+ElevatedButton(
+  onPressed: () {
+    spinWheel();
+  },
+  child: const Text('Spin')
+),
+SizedBox(
+  child: RotationTransition(
+    turns: _controller,
+    child: Container(
+      width: 100,
+      height: 100,
+      color: Colors.blue,
+      child: const Center(
+        child: Text(
+          'Spin',
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+      ),
+    ),
+  )
+),
+*/
