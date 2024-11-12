@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'spinner_db.g.dart';
@@ -10,5 +9,9 @@ class SpinnerData extends HiveObject{
   @HiveField(0)
   late List<String> items;
 
-  SpinnerData({this.items = const []});
+  @HiveField(1)
+  late String name;
+
+  SpinnerData({this.items = const [],
+  this.name = 'Untitled'});
 }

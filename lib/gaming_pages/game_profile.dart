@@ -37,7 +37,7 @@ class _GameProfileState extends State<GameProfile> {
     subpointsControllers = goalsList.map((goal) { 
       return goal.subpoints.map((text) => TextEditingController(text: text)).toList();
     }).toList();
-    crossedOutSubpoints = goalsList.map((goal) => goal.checkValues).toList();
+    crossedOutSubpoints = goalsList.map((goal) => goal.crossed).toList();
   }
 
   @override 
@@ -62,7 +62,7 @@ class _GameProfileState extends State<GameProfile> {
       goal.name = nameControllers[index].text;
       goal.description = descriptionControllers[index].text;
       goal.subpoints = subpointsControllers[index].map((controller) => controller.text).toList();
-      goal.checkValues = crossedOutSubpoints[index];
+      goal.crossed = crossedOutSubpoints[index];
       goal.save();
     });
   }

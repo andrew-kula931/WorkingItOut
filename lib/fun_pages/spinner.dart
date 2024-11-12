@@ -14,7 +14,9 @@ class SpinningPage extends StatefulWidget {
 class SpinningPageState extends State<SpinningPage> with SingleTickerProviderStateMixin {
   StreamController<int> controller = StreamController<int>.broadcast();
   TextEditingController inputValue = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   var spinnerBox = Hive.box('SpinnerData');
+  int boxIndex = 0;
   String selectedItem = '';
 
   //Just for testing
@@ -35,12 +37,12 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
   //No dispose method just yet
 
   void spinWheel() {
-    int selectedIndex = Fortune.randomInt(0, spinnerBox.getAt(0).items.length);
+    int selectedIndex = Fortune.randomInt(0, spinnerBox.getAt(boxIndex).items.length);
     controller.add(selectedIndex);
 
     Future.delayed(const Duration(seconds: 4, milliseconds: 600), () {
       setState(() {
-        selectedItem = spinnerBox.getAt(0).items[selectedIndex];
+        selectedItem = spinnerBox.getAt(boxIndex).items[selectedIndex];
       });
     });
   }
@@ -54,10 +56,59 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container( //This will need to be a container later
-            height: 50,
+          SizedBox(
+            height: 40,
             width: MediaQuery.of(context).size.width,
-            child: const Text('Insert Tabs here'),
+            child: 
+            ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: Hive.box('SpinnerData').length,
+              itemBuilder: (context, index) {
+                var boxAtIndex = Hive.box('SpinnerData').getAt(boxIndex);
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        boxIndex = index;
+                        setState(() {});
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(color: (boxIndex == index) ? Colors.red : Colors.green),
+                        height: 40,
+                        width: 120,
+                        child: Center(
+                          child: Text(boxAtIndex.name, style: const TextStyle(color: Colors.black))
+                        )
+                      )
+                    ),
+                    if (index == Hive.box('SpinnerData').length - 1)
+                      IconButton(
+                        onPressed: () {
+                          SpinnerData data = SpinnerData(
+                            items: ['Item One', 'Item Two'],
+                            name: 'Untitled');
+                          Hive.box('SpinnerData').add(data);
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.add),
+                      )
+                  ]
+                );
+              }
+            )
+          ),
+
+          SizedBox(
+            height: 40,
+            width: 200,
+            child: TextField(
+              controller: nameController,
+              onChanged: (_) {
+                spinnerBox.getAt(boxIndex).name = nameController.text;
+                setState(() {});
+              }
+            ),
           ),
 
           Padding(
@@ -80,7 +131,7 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
               },
               selected: controller.stream,
               items: [
-                for (String item in spinnerBox.getAt(0).items) FortuneItem(child: Text(item))
+                for (String item in spinnerBox.getAt(boxIndex).items) FortuneItem(child: Text(item))
 
                 //for (String name in names) FortuneItem(child: Text(name))
 
@@ -97,14 +148,14 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
             padding: const EdgeInsets.all(10),
             child: SizedBox(
               width: 300,
-              height: 200,
+              height: 150,
               child: ListView.builder(
-                itemCount: spinnerBox.getAt(0).items.length,
+                itemCount: spinnerBox.getAt(boxIndex).items.length,
                 itemBuilder: (context, index) {
-                  var box = spinnerBox.getAt(0);
+                  var box = spinnerBox.getAt(boxIndex);
                   return Row(
                     children: [
-                      Text(spinnerBox.getAt(0).items[index]),
+                      Text(spinnerBox.getAt(boxIndex).items[index]),
                       Padding(
                         padding: const EdgeInsets.only(left: 4),
                         child: IconButton(
@@ -140,8 +191,8 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
                   padding: const EdgeInsets.only(left: 6),
                   child: IconButton(
                     onPressed: () {
-                      spinnerBox.getAt(0).items.add(inputValue.text);
-                      (spinnerBox.getAt(0) as SpinnerData).save();
+                      spinnerBox.getAt(boxIndex).items.add(inputValue.text);
+                      (spinnerBox.getAt(boxIndex) as SpinnerData).save();
                       setState(() {});
                     },
                     icon: const Icon(Icons.add)

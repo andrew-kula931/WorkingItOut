@@ -95,7 +95,7 @@ class GameGoalsAdapter extends TypeAdapter<GameGoals> {
       description: fields[1] as String,
       subpoints: (fields[2] as List).cast<String>(),
       gameid: fields[3] as int,
-      checkValues: (fields[4] as List).cast<bool>(),
+      crossed: (fields[4] as List).cast<bool>(),
     );
   }
 
@@ -112,7 +112,7 @@ class GameGoalsAdapter extends TypeAdapter<GameGoals> {
       ..writeByte(3)
       ..write(obj.gameid)
       ..writeByte(4)
-      ..write(obj.checkValues);
+      ..write(obj.crossed);
   }
 
   @override
