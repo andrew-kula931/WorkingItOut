@@ -23,16 +23,6 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
   final FocusNode afterItemSubmitted = FocusNode();
   final Map<int, bool> hoverMap = {};
 
-  //Just for testing
-  final List<String> names = [
-    'The Long Dark',
-    'Minecraft',
-    'Project Zomboid',
-    'Terraria',
-    'Warframe',
-    'Literally Anything Else'
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -124,8 +114,8 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
 
           //Top tab row for individual spinners
           SizedBox(
-            height: 40,
-            width: MediaQuery.of(context).size.width,
+            height: 40.0,
+            width: MediaQuery.of(context).size.width * 1.0,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: Hive.box('SpinnerData').length,
@@ -147,7 +137,7 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
                       },
                       child: Container(
                         decoration: BoxDecoration(color: (boxIndex == index) ? Colors.red : Colors.green),
-                        height: 40,
+                        height: 40.0,
                         width: MediaQuery.of(context).size.width * .18,
                         child: MouseRegion(
                           onEnter: (event) {
@@ -225,8 +215,8 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
 
                   //Title box for spinner name
                   SizedBox(
-                    height: 40,
-                    width: 200,
+                    height: 40.0,
+                    width: 200.0,
                     child: TextField(
                       controller: nameController,
                       focusNode: _focusNode,
@@ -275,10 +265,10 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
                     padding: const EdgeInsets.all(10),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height - 302),
+                        maxHeight: MediaQuery.of(context).size.height - 302.0),
                       child: SizedBox(
-                        width: 300,
-                        height: spinnerBox.getAt(boxIndex).items.length * 40,
+                        width: 300.0,
+                        height: spinnerBox.getAt(boxIndex).items.length * 40.0,
                         child: ListView.builder(
                           itemCount: spinnerBox.getAt(boxIndex).items.length,
                           itemBuilder: (context, index) {
@@ -317,8 +307,8 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
-                          height: 40,
-                          width: 250,
+                          height: 40.0,
+                          width: 250.0,
                           child: TextField(
                             controller: inputValue,
                             focusNode: afterItemSubmitted,
@@ -353,7 +343,7 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
           ),
 
           //Just to get the content centered
-          const SizedBox(height: 125),
+          const SizedBox(height: 125.0),
         ]
       ),
     );
