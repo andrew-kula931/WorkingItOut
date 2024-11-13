@@ -257,87 +257,90 @@ class SpinningPageState extends State<SpinningPage> with SingleTickerProviderSta
               ),
 
               //This is the column on the right of the screen with the items
-              Column(
-                children: [
+              Container(
+                color: const Color.fromARGB(206, 201, 200, 200),
+                child: Column(
+                  children: [
 
-                  //These are the items
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height - 302.0),
-                      child: SizedBox(
-                        width: 300.0,
-                        height: spinnerBox.getAt(boxIndex).items.length * 40.0,
-                        child: ListView.builder(
-                          itemCount: spinnerBox.getAt(boxIndex).items.length,
-                          itemBuilder: (context, index) {
-                            var box = spinnerBox.getAt(boxIndex);
-                            return Row(
-                              children: [
-                                Text(spinnerBox.getAt(boxIndex).items[index]),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 4),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      if (spinnerBox.getAt(boxIndex).items.length < 3) {
-                                        _showWarning(context);
-                                        return;
-                                      } else {
-                                        box.items.removeAt(index);
-                                        (box as SpinnerData).save();
-                                        setState(() {});
-                                      }
-                                    },
-                                    icon: const Icon(Icons.delete)
+                    //These are the items
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height - 302.0),
+                        child: SizedBox(
+                          width: 300.0,
+                          height: spinnerBox.getAt(boxIndex).items.length * 40.0,
+                          child: ListView.builder(
+                            itemCount: spinnerBox.getAt(boxIndex).items.length,
+                            itemBuilder: (context, index) {
+                              var box = spinnerBox.getAt(boxIndex);
+                              return Row(
+                                children: [
+                                  Text(spinnerBox.getAt(boxIndex).items[index]),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 4),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        if (spinnerBox.getAt(boxIndex).items.length < 3) {
+                                          _showWarning(context);
+                                          return;
+                                        } else {
+                                          box.items.removeAt(index);
+                                          (box as SpinnerData).save();
+                                          setState(() {});
+                                        }
+                                      },
+                                      icon: const Icon(Icons.delete)
+                                    )
                                   )
-                                )
-                              ]
-                            );
-                          }
-                        ),
-                      ),
-                    )
-                  ),
-
-                  //Add new item
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          height: 40.0,
-                          width: 250.0,
-                          child: TextField(
-                            controller: inputValue,
-                            focusNode: afterItemSubmitted,
-                            decoration: const InputDecoration(border: OutlineInputBorder()),
-                            onSubmitted: (_) {
-                              spinnerBox.getAt(boxIndex).items.add(inputValue.text);
-                              (spinnerBox.getAt(boxIndex) as SpinnerData).save();
-                              inputValue.clear();
-                              FocusScope.of(context).requestFocus(afterItemSubmitted);
-                              setState(() {});
+                                ]
+                              );
                             }
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6),
-                          child: IconButton(
-                            onPressed: () {
-                              spinnerBox.getAt(boxIndex).items.add(inputValue.text);
-                              (spinnerBox.getAt(boxIndex) as SpinnerData).save();
-                              inputValue.clear();
-                              setState(() {});
-                            },
-                            icon: const Icon(Icons.add)
-                          ),
-                        ),
-                      ],
+                      )
                     ),
-                  ),
-                ],
+
+                    //Add new item
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 40.0,
+                            width: 250.0,
+                            child: TextField(
+                              controller: inputValue,
+                              focusNode: afterItemSubmitted,
+                              decoration: const InputDecoration(border: OutlineInputBorder()),
+                              onSubmitted: (_) {
+                                spinnerBox.getAt(boxIndex).items.add(inputValue.text);
+                                (spinnerBox.getAt(boxIndex) as SpinnerData).save();
+                                inputValue.clear();
+                                FocusScope.of(context).requestFocus(afterItemSubmitted);
+                                setState(() {});
+                              }
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 6),
+                            child: IconButton(
+                              onPressed: () {
+                                spinnerBox.getAt(boxIndex).items.add(inputValue.text);
+                                (spinnerBox.getAt(boxIndex) as SpinnerData).save();
+                                inputValue.clear();
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.add)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ]
           ),
