@@ -9,6 +9,7 @@ import 'gaming_pages/gaming_home.dart';
 import 'gaming_pages/game_profile.dart';
 import 'fun_pages/spinner.dart';
 import 'data/spinner_db.dart';
+import 'fun_pages/solitare.dart';
 
 void main() async {
 
@@ -74,6 +75,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
   var routinePlannerColor = Colors.lightGreen;
   var gameListColor = Colors.lightGreen;
   var recentGameColor = Colors.lightGreen;
+  var solitareListColor = Colors.lightGreen;
 
   //Dropdown menu variables
   bool gamingMenu = false;
@@ -602,8 +604,29 @@ class _WorkoutAppState extends State<WorkoutApp> {
                             decoration: const BoxDecoration(color: Colors.green),
                             child: Column (
                               children: [
-                                const Text("Solitare"),
+                                //Solitare Menu
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Solitare()));
+                                  },
+                                  child: MouseRegion(
+                                    onEnter: (event) => setState(() => solitareListColor = Colors.green),
+                                    onExit: (event) => setState(() => solitareListColor = Colors.lightGreen),
+                                    child: Container (
+                                      decoration: BoxDecoration(color: solitareListColor),
+                                      width: MediaQuery.of(context).size.width * .25,
+                                      height: 40,
+                                      child: const Center(
+                                        child: Text("Solitare"),
+                                      )
+                                    )
+                                  )
+                                ),
+
+                                //Poker Menu
                                 const Text('Poker'),
+
+                                //Spinner Menu
                                 GestureDetector(
                                   onTap: () async {
                                     await Hive.openBox('SpinnerData');
@@ -622,7 +645,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       width: MediaQuery.of(context).size.width * .25,
                                       height: 40,
                                       child: const Center(
-                                        child: Text("Games List"),
+                                        child: Text("Random Wheel"),
                                       )
                                     )
                                   )
