@@ -307,6 +307,18 @@ class _WorkoutAppState extends State<WorkoutApp> {
                         ],
                       ),
                     ),
+
+
+                    //Delete this because it is unnecessary
+                    Padding(
+                      padding: EdgeInsets.only(left: 40, right: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Major Change to the algorithm, this will crash everything'),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ],
