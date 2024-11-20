@@ -26,6 +26,6 @@ jobs:
       - name: Build web app
         run: flutter build web
       - name: Transfer Files
-        run: rsync -z -a -v --delete ./build/web/* andrewkula@feigling:~/WorkingItOut
+        run: rsync -z -a -v --delete -e "ssh -o StrictHostKeyChecking=no" ./build/web/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}
       - name: Reload pm2
-        run: ssh andrewkula@feigling "source ~/.nvm/nvm.sh && pm2 reload workoutApp"
+        run: ssh -o StrictHostkeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "source ~/.nvm/nvm.sh && pm2 reload workoutApp"
