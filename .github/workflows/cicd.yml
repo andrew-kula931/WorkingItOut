@@ -1,0 +1,31 @@
+name: Working It Out CI/CD
+on: 
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v2
+        with: 
+          authkey: ${{ secrets.AUTO_DEPLOY }}
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.24.5
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build web app
+        run: flutter build web
+      - name: Transfer Files
+        run: rsync -z -a -v --delete ./build/web/* andrewkula@feigling:~/WorkingItOut
+      - name: Reload pm2
+        run: ssh andrewkula@feigling "source ~/.nvm/nvm.sh && pm2 reload workoutApp"
