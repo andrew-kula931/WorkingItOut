@@ -28,6 +28,12 @@ class _SolitareState extends State<Solitare> {
   List<PlayingCard> changingCard = [];
   List<bool> selected = [true, true, true, true, true, true, true, true];
 
+  @override
+  void initState() {
+    super.initState();
+    dealCards(deck);
+  }
+  
   void dealCards(List<PlayingCard> deck) {
     // Ensure the deck is shuffled
     deck.shuffle();
@@ -41,14 +47,9 @@ class _SolitareState extends State<Solitare> {
     }
   }
 
+  //Card index is specific to where in a column a card lies
   void setCardIndex(int index) {
     cardIndex = index;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    dealCards(deck);
   }
 
   void resetBorders() {
@@ -134,6 +135,7 @@ class _SolitareState extends State<Solitare> {
         break;
     }
 
+    //Verifies that the card is placeable
     if (correctNumber && correctSuit) {
       return true;
     } else {
@@ -141,6 +143,7 @@ class _SolitareState extends State<Solitare> {
     }
   }
 
+  //This checks to see if a card can be added to a top stack
   bool isCardPutAtop(PlayingCard? topCard, Suit defaultSuit) {
     bool correctSuit = false;
     bool nextValue = false;
@@ -165,6 +168,7 @@ class _SolitareState extends State<Solitare> {
       correctSuit = true;
     }
 
+    //Checks for card value
     switch (topCard.value) {
       case CardValue.ace:
         if (changingCard[0].value == CardValue.two) {
@@ -237,10 +241,15 @@ class _SolitareState extends State<Solitare> {
     }
   }
 
+  //This is the actual algorithm to place a card on a top stack
   void moveCardOnTop(PlayingCard? topCard, Suit boxSuit, List<PlayingCard> stack) {
+    
+    //If more than one card is selected that function breaks
     if (changingCard.length > 1 || changingCard.isEmpty) {
       return;
     }
+
+    //If selected index is not null then it comes from a column
     if (selectedIndex != null) {
       if (isCardPutAtop(topCard, boxSuit)) {
         stack.add(playingColumns[selectedIndex!].removeLast());
@@ -250,12 +259,16 @@ class _SolitareState extends State<Solitare> {
         selectedIndex = null;
         changingCard = [];
       }
+
+    //SelectedIndex is null so it comes from the secondDeck
     } else {
       if (isCardPutAtop(topCard, boxSuit)) {
         stack.add(secondDeck.removeLast());
         changingCard = [];
       }
     }
+
+    //Update page
     resetBorders();
     setState(() {});
   }
@@ -268,8 +281,12 @@ class _SolitareState extends State<Solitare> {
       //Makes sure that the column is not empty
       if (playingColumns[currentIndex].isNotEmpty) {
         selectedIndex = currentIndex;
+
+        //Checks to see if there is one or multiple cards
         if (cardIndex == null || cardIndex == playingColumns[currentIndex].length - 1) {
           changingCard.add(playingColumns[currentIndex].last);
+
+        //This handles multiple cards selected
         } else {
           for (int i = cardIndex!; i < playingColumns[currentIndex].length; i++) {
             changingCard.add(playingColumns[currentIndex][i]);
@@ -305,6 +322,7 @@ class _SolitareState extends State<Solitare> {
     //Occurs if card is placeable
     } else {
       if (cardIsPlaceable(playingColumns[currentIndex].last)) {
+
         //Occurs if card is selected from secondDeck
         if (selectedIndex == null) {
           playingColumns[currentIndex].add(changingCard[0]);
@@ -366,6 +384,8 @@ class _SolitareState extends State<Solitare> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
+              //Top Diamond stack
               GestureDetector(
                 onTap: () {
                   moveCardOnTop(diamondsStack.isNotEmpty ? diamondsStack.last : null, Suit.diamonds, diamondsStack);
@@ -380,6 +400,8 @@ class _SolitareState extends State<Solitare> {
                   ),
                 ),
               ),
+
+              //Top Heart Stack
               GestureDetector(
                 onTap: () {
                   moveCardOnTop(heartsStack.isNotEmpty ? heartsStack.last : null, Suit.hearts, heartsStack);
@@ -394,6 +416,8 @@ class _SolitareState extends State<Solitare> {
                   ),
                 ),
               ),
+
+              //Top Spades Stack
               GestureDetector(
                 onTap: () {
                   moveCardOnTop(spadesStack.isNotEmpty ? spadesStack.last : null, Suit.spades, spadesStack);
@@ -408,6 +432,8 @@ class _SolitareState extends State<Solitare> {
                   ),
                 ),
               ),
+
+              //Top Clubs Stack
               GestureDetector(
                 onTap: () {
                   moveCardOnTop(clubsStack.isNotEmpty ? clubsStack.last : null, Suit.clubs, clubsStack);
