@@ -51,8 +51,17 @@ class _CardFanState extends State<CardFan> {
     return GestureDetector(
       onTap: () {
         selectedIndex = index;
+        if (widget.showBack[index]) {
+          for (int i = 0; i < widget.showBack.length; i++) {
+            if (!widget.showBack[i]) {
+              widget.selectedCardIndex(i);
+              break;
+            }
+          }
+        } else {
+          widget.selectedCardIndex(index);
+        }
         widget.moveCard(widget.spot);
-        widget.selectedCardIndex(index);
         setState(() {});
       },
       child: 

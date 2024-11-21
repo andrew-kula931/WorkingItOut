@@ -25,7 +25,7 @@ class _SolitareState extends State<Solitare> {
   //Selecting variables
   int? selectedIndex;
   int? cardIndex;
-  PlayingCard? changingCard;
+  List<PlayingCard> changingCard = [];
   List<bool> selected = [true, true, true, true, true, true, true, true];
 
   void dealCards(List<PlayingCard> deck) {
@@ -63,7 +63,7 @@ class _SolitareState extends State<Solitare> {
     bool correctNumber = false;
 
     //Checking suit
-    if (changingCard?.suit == Suit.diamonds || changingCard?.suit == Suit.hearts) {
+    if (changingCard[0].suit == Suit.diamonds || changingCard[0].suit == Suit.hearts) {
       if (newCard.suit == Suit.spades || newCard.suit == Suit.clubs) {
         correctSuit = true;
       }
@@ -76,57 +76,57 @@ class _SolitareState extends State<Solitare> {
     //Checking number
     switch (newCard.value) {
       case CardValue.three:
-        if (changingCard?.value == CardValue.two) {
+        if (changingCard[0].value == CardValue.two) {
           correctNumber = true;
         }
         break;
       case CardValue.four:
-        if (changingCard?.value == CardValue.three) {
+        if (changingCard[0].value == CardValue.three) {
           correctNumber = true;
         }
         break;
       case CardValue.five:
-        if (changingCard?.value == CardValue.four) {
+        if (changingCard[0].value == CardValue.four) {
           correctNumber = true;
         }
         break;
       case CardValue.six:
-        if (changingCard?.value == CardValue.five) {
+        if (changingCard[0].value == CardValue.five) {
           correctNumber = true;
         }
         break;
       case CardValue.seven:
-        if (changingCard?.value == CardValue.six) {
+        if (changingCard[0].value == CardValue.six) {
           correctNumber = true;
         }
         break;
       case CardValue.eight:
-        if (changingCard?.value == CardValue.seven) {
+        if (changingCard[0].value == CardValue.seven) {
           correctNumber = true;
         }
         break;
       case CardValue.nine:
-        if (changingCard?.value == CardValue.eight) {
+        if (changingCard[0].value == CardValue.eight) {
           correctNumber = true;
         }
         break;
       case CardValue.ten:
-        if (changingCard?.value == CardValue.nine) {
+        if (changingCard[0].value == CardValue.nine) {
           correctNumber = true;
         }
         break;
       case CardValue.jack:
-        if (changingCard?.value == CardValue.ten) {
+        if (changingCard[0].value == CardValue.ten) {
           correctNumber = true;
         }
         break;
       case CardValue.queen:
-        if (changingCard?.value == CardValue.jack) {
+        if (changingCard[0].value == CardValue.jack) {
           correctNumber = true;
         }
         break;
       case CardValue.king:
-        if (changingCard?.value == CardValue.queen) {
+        if (changingCard[0].value == CardValue.queen) {
           correctNumber = true;
         }
         break;
@@ -146,12 +146,12 @@ class _SolitareState extends State<Solitare> {
     bool nextValue = false;
 
     //Makes sure that a card is selected
-    if (changingCard == null) {
+    if (changingCard.isEmpty) {
       return false;
     }
 
     //Returns true if there is no top card and the suits match
-    if (topCard == null && defaultSuit == changingCard!.suit && changingCard!.value == CardValue.ace) {
+    if (topCard == null && defaultSuit == changingCard[0].suit && changingCard[0].value == CardValue.ace) {
       return true;
     }
 
@@ -161,68 +161,68 @@ class _SolitareState extends State<Solitare> {
     }
 
     //Checks to see if the suits match in general
-    if (defaultSuit == changingCard!.suit) {
+    if (defaultSuit == changingCard[0].suit) {
       correctSuit = true;
     }
 
     switch (topCard.value) {
       case CardValue.ace:
-        if (changingCard!.value == CardValue.two) {
+        if (changingCard[0].value == CardValue.two) {
           nextValue = true;
         }
         break;
       case CardValue.two:
-        if (changingCard!.value == CardValue.three) {
+        if (changingCard[0].value == CardValue.three) {
           nextValue = true;
         }
         break;
       case CardValue.three:
-        if (changingCard!.value == CardValue.four) {
+        if (changingCard[0].value == CardValue.four) {
           nextValue = true;
         }
         break;
       case CardValue.four:
-        if (changingCard!.value == CardValue.five) {
+        if (changingCard[0].value == CardValue.five) {
           nextValue = true;
         }
         break;
       case CardValue.five:
-        if (changingCard!.value == CardValue.six) {
+        if (changingCard[0].value == CardValue.six) {
           nextValue = true;
         }
         break;
       case CardValue.six:
-        if (changingCard!.value == CardValue.seven) {
+        if (changingCard[0].value == CardValue.seven) {
           nextValue = true;
         }
         break;
       case CardValue.seven:
-        if (changingCard!.value == CardValue.eight) {
+        if (changingCard[0].value == CardValue.eight) {
           nextValue = true;
         }
         break;
       case CardValue.eight:
-        if (changingCard!.value == CardValue.nine) {
+        if (changingCard[0].value == CardValue.nine) {
           nextValue = true;
         }
         break;
       case CardValue.nine:
-        if (changingCard!.value == CardValue.ten) {
+        if (changingCard[0].value == CardValue.ten) {
           nextValue = true;
         }
         break;
       case CardValue.ten:
-        if (changingCard!.value == CardValue.jack) {
+        if (changingCard[0].value == CardValue.jack) {
           nextValue = true;
         }
         break;
       case CardValue.jack:
-        if (changingCard!.value == CardValue.queen) {
+        if (changingCard[0].value == CardValue.queen) {
           nextValue = true;
         }
         break;
       case CardValue.queen:
-        if (changingCard!.value == CardValue.king) {
+        if (changingCard[0].value == CardValue.king) {
           nextValue = true;
         }
         break;
@@ -238,29 +238,43 @@ class _SolitareState extends State<Solitare> {
   }
 
   void moveCardOnTop(PlayingCard? topCard, Suit boxSuit, List<PlayingCard> stack) {
+    if (changingCard.length > 1 || changingCard.isEmpty) {
+      return;
+    }
     if (selectedIndex != null) {
       if (isCardPutAtop(topCard, boxSuit)) {
         stack.add(playingColumns[selectedIndex!].removeLast());
         showingBack[selectedIndex!].removeLast();
         showingBack[selectedIndex!].last = false;
+
+        selectedIndex = null;
+        changingCard = [];
       }
-    } else if (selectedIndex == null && changingCard != null) {
+    } else {
       if (isCardPutAtop(topCard, boxSuit)) {
         stack.add(secondDeck.removeLast());
+        changingCard = [];
       }
     }
+    resetBorders();
     setState(() {});
   }
 
   void moveCard(int currentIndex) {
 
     //Checks to see if card needs to be selected
-    if (selectedIndex == null && changingCard == null) {
+    if (selectedIndex == null && changingCard.isEmpty) {
 
       //Makes sure that the column is not empty
       if (playingColumns[currentIndex].isNotEmpty) {
         selectedIndex = currentIndex;
-        changingCard = cardIndex == null ? playingColumns[currentIndex].last : playingColumns[currentIndex][cardIndex!];
+        if (cardIndex == null || cardIndex == playingColumns[currentIndex].length - 1) {
+          changingCard.add(playingColumns[currentIndex].last);
+        } else {
+          for (int i = cardIndex!; i < playingColumns[currentIndex].length; i++) {
+            changingCard.add(playingColumns[currentIndex][i]);
+          }
+        }
       }
 
       resetBorders();
@@ -268,52 +282,77 @@ class _SolitareState extends State<Solitare> {
 
     //Checks for empty row
     } else if (playingColumns[currentIndex].isEmpty) {
-      if (changingCard != null && selectedIndex != null && changingCard!.value == CardValue.king) {
-        playingColumns[currentIndex].add(changingCard!);
-        showingBack[currentIndex].add(false);
-        playingColumns[selectedIndex!].removeLast();
-        showingBack[selectedIndex!].removeLast();
+      if (changingCard[0].value == CardValue.king) {
+        for (PlayingCard card in changingCard) {
+          playingColumns[currentIndex].add(card);
+          showingBack[currentIndex].add(false);
+        }
 
-        changingCard = null;
+        //If selectedIndex is null it is from secondDeck otherwise updates other column
+        if (selectedIndex != null) {
+          for (int i = 0; i < changingCard.length; i++) {
+            playingColumns[selectedIndex!].removeLast();
+            showingBack[selectedIndex!].removeLast();
+            showingBack[selectedIndex!].last = false;      
+          }
+        } else {
+          secondDeck.removeLast();
+        }
+
+        changingCard = [];
         selectedIndex = null;
       }
-    //Occurs if card placeable
+    //Occurs if card is placeable
     } else {
       if (cardIsPlaceable(playingColumns[currentIndex].last)) {
         //Occurs if card is selected from secondDeck
         if (selectedIndex == null) {
-          playingColumns[currentIndex].add(changingCard!);
+          playingColumns[currentIndex].add(changingCard[0]);
           showingBack[currentIndex].add(false);
 
           secondDeck.removeLast();
 
-          changingCard = null;
+          changingCard.removeLast();
 
         //Runs when a card is being moved between piles after selection
         } else {
-          playingColumns[currentIndex].add(changingCard!);
-          showingBack[currentIndex].add(false);
+          for (PlayingCard card in changingCard) {
+            playingColumns[currentIndex].add(card);
+            showingBack[currentIndex].add(false);
+          }
           
-          showingBack[selectedIndex!].removeLast();
+          for (int i = 0; i < changingCard.length; i++) {
+            showingBack[selectedIndex!].removeLast();
+            playingColumns[selectedIndex!].removeLast();
+          }
+          
           if (showingBack[selectedIndex!].isNotEmpty) {
             showingBack[selectedIndex!].last = false;
           }
-          playingColumns[selectedIndex!].removeLast();
 
-          changingCard = null;
+          changingCard = [];
           selectedIndex = null;
         }
 
       //This is if the card is not placeable
       } else {
         selectedIndex = null;
-        changingCard = null;
+        changingCard = [];
       }
 
       resetBorders();
     }
     setState(() {});
   }
+
+
+
+
+  /*
+
+    Widget Tree begins here
+
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -384,15 +423,13 @@ class _SolitareState extends State<Solitare> {
                 ),
               ),
 
-              //For Debugging
-              IconButton(
-                onPressed: () {
-                  print(selectedIndex);
-                  print(changingCard?.suit ?? 'null');
-                  print(changingCard?.value ?? 'null');
-                  print(cardIndex);
-                },
-                icon: const Icon(Icons.airplane_ticket)
+              //For debugging
+              Column(
+                children: [
+                  Text('Selected index: $selectedIndex'),
+                  Text('ChangingCard amount: ${changingCard.length}'),
+                  Text('CardIndex: $cardIndex')
+                ]
               ),
             ],
           ),
@@ -617,7 +654,8 @@ class _SolitareState extends State<Solitare> {
                     onTap: () {
                       if (secondDeck.isNotEmpty) {
                         selectedIndex = null;
-                        changingCard = secondDeck.last;
+                        changingCard = [];
+                        changingCard.add(secondDeck.last);
                         
                         resetBorders();
                         selected[7] = false;
