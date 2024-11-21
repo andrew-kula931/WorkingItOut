@@ -21,7 +21,7 @@ class _CardStackState extends State<CardStack> {
 
   ShapeBorder greenBorder = RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(8),
-    side: const BorderSide(color: Colors.green, width: 1));
+    side: const BorderSide(color: Colors.green, width: 2));
 
   int selectedIndex = 100;
 

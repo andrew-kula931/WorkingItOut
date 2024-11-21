@@ -27,7 +27,7 @@ class _CardFanState extends State<CardFan> {
 
   ShapeBorder greenBorder = RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(8),
-    side: const BorderSide(color: Colors.green, width: 1));
+    side: const BorderSide(color: Colors.green, width: 2));
 
   int selectedIndex = 100;
 
