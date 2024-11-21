@@ -24,6 +24,7 @@ class _SolitareState extends State<Solitare> {
 
   //Selecting variables
   int? selectedIndex;
+  int? cardIndex;
   PlayingCard? changingCard;
   List<bool> selected = [true, true, true, true, true, true, true, true];
 
@@ -40,6 +41,10 @@ class _SolitareState extends State<Solitare> {
     }
   }
 
+  void setCardIndex(int index) {
+    cardIndex = index;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +55,7 @@ class _SolitareState extends State<Solitare> {
     for (int i = 0; i < selected.length; i++) {
       selected[i] = true;
     }
+    setState(() {});
   }
 
   bool cardIsPlaceable(PlayingCard newCard) {
@@ -155,7 +161,7 @@ class _SolitareState extends State<Solitare> {
     }
 
     //Checks to see if the suits match in general
-    if (topCard.suit == changingCard!.suit) {
+    if (defaultSuit == changingCard!.suit) {
       correctSuit = true;
     }
 
@@ -235,6 +241,12 @@ class _SolitareState extends State<Solitare> {
     if (selectedIndex != null) {
       if (isCardPutAtop(topCard, boxSuit)) {
         stack.add(playingColumns[selectedIndex!].removeLast());
+        showingBack[selectedIndex!].removeLast();
+        showingBack[selectedIndex!].last = false;
+      }
+    } else if (selectedIndex == null && changingCard != null) {
+      if (isCardPutAtop(topCard, boxSuit)) {
+        stack.add(secondDeck.removeLast());
       }
     }
     setState(() {});
@@ -248,12 +260,23 @@ class _SolitareState extends State<Solitare> {
       //Makes sure that the column is not empty
       if (playingColumns[currentIndex].isNotEmpty) {
         selectedIndex = currentIndex;
-        changingCard = playingColumns[currentIndex].last;
+        changingCard = cardIndex == null ? playingColumns[currentIndex].last : playingColumns[currentIndex][cardIndex!];
       }
 
       resetBorders();
       selected[currentIndex] = false;
 
+    //Checks for empty row
+    } else if (playingColumns[currentIndex].isEmpty) {
+      if (changingCard != null && selectedIndex != null && changingCard!.value == CardValue.king) {
+        playingColumns[currentIndex].add(changingCard!);
+        showingBack[currentIndex].add(false);
+        playingColumns[selectedIndex!].removeLast();
+        showingBack[selectedIndex!].removeLast();
+
+        changingCard = null;
+        selectedIndex = null;
+      }
     //Occurs if card placeable
     } else {
       if (cardIsPlaceable(playingColumns[currentIndex].last)) {
@@ -306,7 +329,7 @@ class _SolitareState extends State<Solitare> {
             children: [
               GestureDetector(
                 onTap: () {
-                  moveCardOnTop(diamondsStack.last, Suit.diamonds, diamondsStack);
+                  moveCardOnTop(diamondsStack.isNotEmpty ? diamondsStack.last : null, Suit.diamonds, diamondsStack);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
@@ -320,7 +343,7 @@ class _SolitareState extends State<Solitare> {
               ),
               GestureDetector(
                 onTap: () {
-                  moveCardOnTop(heartsStack.last, Suit.hearts, heartsStack);
+                  moveCardOnTop(heartsStack.isNotEmpty ? heartsStack.last : null, Suit.hearts, heartsStack);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
@@ -328,13 +351,13 @@ class _SolitareState extends State<Solitare> {
                     width: 100,
                     height: 140,
                     color: Colors.red,
-                    child: CardStack(cards: heartsStack, showingBack: false, selected: true),
+                    child: CardStack(cards: heartsStack, showingBack: false, selected: true,),
                   ),
                 ),
               ),
               GestureDetector(
                 onTap: () {
-                  moveCardOnTop(spadesStack.last, Suit.spades, spadesStack);
+                  moveCardOnTop(spadesStack.isNotEmpty ? spadesStack.last : null, Suit.spades, spadesStack);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
@@ -342,13 +365,13 @@ class _SolitareState extends State<Solitare> {
                     width: 100,
                     height: 140,
                     color: Colors.red,
-                    child: CardStack(cards: spadesStack, showingBack: false, selected: true),
+                    child: CardStack(cards: spadesStack, showingBack: false, selected: true,),
                   ),
                 ),
               ),
               GestureDetector(
                 onTap: () {
-                  moveCardOnTop(clubsStack.last, Suit.clubs, clubsStack);
+                  moveCardOnTop(clubsStack.isNotEmpty ? clubsStack.last : null, Suit.clubs, clubsStack);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
@@ -356,9 +379,20 @@ class _SolitareState extends State<Solitare> {
                     width: 100,
                     height: 140,
                     color: Colors.red,
-                    child: CardStack(cards: clubsStack, showingBack: false, selected: true),
+                    child: CardStack(cards: clubsStack, showingBack: false, selected: true,),
                   ),
                 ),
+              ),
+
+              //For Debugging
+              IconButton(
+                onPressed: () {
+                  print(selectedIndex);
+                  print(changingCard?.suit ?? 'null');
+                  print(changingCard?.value ?? 'null');
+                  print(cardIndex);
+                },
+                icon: const Icon(Icons.airplane_ticket)
               ),
             ],
           ),
@@ -384,6 +418,9 @@ class _SolitareState extends State<Solitare> {
                     cards: playingColumns[0],
                     showBack: showingBack[0],
                     selected: selected[0],
+                    selectedCardIndex: setCardIndex,
+                    spot: 0,
+                    moveCard: moveCard,
                   ) : 
                   Container(
                     width: 100,
@@ -406,6 +443,9 @@ class _SolitareState extends State<Solitare> {
                     cards: playingColumns[1],
                     showBack: showingBack[1],
                     selected: selected[1],
+                    selectedCardIndex: setCardIndex,
+                    spot: 1,
+                    moveCard: moveCard
                   ) : 
                   Container(
                     width: 100,
@@ -428,6 +468,9 @@ class _SolitareState extends State<Solitare> {
                     cards: playingColumns[2],
                       showBack: showingBack[2],
                       selected: selected[2],
+                      selectedCardIndex: setCardIndex,
+                      spot: 2,
+                      moveCard: moveCard
                   ) :
                   Container(
                     width: 100,
@@ -450,6 +493,9 @@ class _SolitareState extends State<Solitare> {
                     cards: playingColumns[3],
                     showBack: showingBack[3],
                     selected: selected[3],
+                    selectedCardIndex: setCardIndex,
+                    spot: 3,
+                    moveCard: moveCard
                   ) :
                   Container(
                     width: 100,
@@ -472,6 +518,9 @@ class _SolitareState extends State<Solitare> {
                     cards: playingColumns[4],
                     showBack: showingBack[4],
                     selected: selected[4],
+                    selectedCardIndex: setCardIndex,
+                    spot: 4,
+                    moveCard: moveCard
                   ) :
                   Container(
                     width: 100,
@@ -494,6 +543,9 @@ class _SolitareState extends State<Solitare> {
                     cards: playingColumns[5],
                     showBack: showingBack[5],
                     selected: selected[5],
+                    selectedCardIndex: setCardIndex,
+                    spot: 5,
+                    moveCard: moveCard
                   ) :
                   Container(
                     width: 100,
@@ -516,6 +568,9 @@ class _SolitareState extends State<Solitare> {
                     cards: playingColumns[6],
                     showBack: showingBack[6],
                     selected: selected[6],
+                    selectedCardIndex: setCardIndex,
+                    spot: 6,
+                    moveCard: moveCard
                   ) :
                   Container(
                     width: 100,

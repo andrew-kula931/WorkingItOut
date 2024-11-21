@@ -6,6 +6,7 @@ class CardStack extends StatefulWidget {
   final bool showingBack;
   final bool selected;
 
+
   /// Creates a flat card fan.
   const CardStack({super.key, required this.cards, required this.showingBack, required this.selected});
 
@@ -22,6 +23,8 @@ class _CardStackState extends State<CardStack> {
     borderRadius: BorderRadius.circular(8),
     side: const BorderSide(color: Colors.green, width: 1));
 
+  int selectedIndex = 100;
+
   @override
   Widget build(Object context) {
     return Stack(
@@ -29,16 +32,16 @@ class _CardStackState extends State<CardStack> {
         widget.cards.length,
         (index) => Align(
           alignment: const Alignment(0, 0),
-          child: buildCard(widget.cards[index]),
+          child: buildCard(widget.cards[index], index),
         ),
       ),
     );
   }
 
-  Widget buildCard(PlayingCard card) {
+  Widget buildCard(PlayingCard card, int index) {
     return 
       (widget.selected) ?
-        PlayingCardView(card: card, showBack: widget.showingBack, elevation: 3.0, shape: blackBorder) :
-        PlayingCardView(card: card, showBack: widget.showingBack, elevation: 3.0, shape: greenBorder);
+          PlayingCardView(card: card, showBack: widget.showingBack, elevation: 3.0, shape: blackBorder) :
+          PlayingCardView(card: card, showBack: widget.showingBack, elevation: 3.0, shape: greenBorder);
   }
 }
