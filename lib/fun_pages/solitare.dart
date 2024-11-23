@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:playing_cards/playing_cards.dart';
 import '../fun_components/card_fan.dart';
 import '../fun_components/card_stack.dart';
+import '../fun_components/empty_stack.dart';
 
 class Solitare extends StatefulWidget {
   const Solitare({super.key});
@@ -254,7 +257,11 @@ class _SolitareState extends State<Solitare> {
       if (isCardPutAtop(topCard, boxSuit)) {
         stack.add(playingColumns[selectedIndex!].removeLast());
         showingBack[selectedIndex!].removeLast();
-        showingBack[selectedIndex!].last = false;
+
+        //Makes sure that the list is not empty
+        if (showingBack[selectedIndex!].isNotEmpty) {
+          showingBack[selectedIndex!].last = false;      
+        }
 
         selectedIndex = null;
         changingCard = [];
@@ -395,8 +402,23 @@ class _SolitareState extends State<Solitare> {
                   child: Container(
                     width: 100,
                     height: 140,
-                    color: Colors.red,
-                    child: CardStack(cards: diamondsStack, showingBack: false, selected: true),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (diamondsStack.isEmpty) ? Border.all(width: 2) : null), 
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            height: 50,
+                            width: 30,
+                            child: Image.asset(
+                              "assets/card_imagery/diamond.png",
+                              package: 'playing_cards',
+                              filterQuality: FilterQuality.high,
+                            ),
+                          ),
+                        ),
+                        CardStack(cards: diamondsStack, showingBack: false, selected: true),
+                      ]
+                    )
                   ),
                 ),
               ),
@@ -411,8 +433,23 @@ class _SolitareState extends State<Solitare> {
                   child: Container(
                     width: 100,
                     height: 140,
-                    color: Colors.red,
-                    child: CardStack(cards: heartsStack, showingBack: false, selected: true,),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (heartsStack.isEmpty) ? Border.all(width: 2) : null), 
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            height: 50,
+                            width: 30,
+                            child: Image.asset(
+                              "assets/card_imagery/heart.png",
+                              package: 'playing_cards',
+                              filterQuality: FilterQuality.high,
+                            ),
+                          ),
+                        ),
+                        CardStack(cards: heartsStack, showingBack: false, selected: true),
+                      ]
+                    )
                   ),
                 ),
               ),
@@ -427,8 +464,23 @@ class _SolitareState extends State<Solitare> {
                   child: Container(
                     width: 100,
                     height: 140,
-                    color: Colors.red,
-                    child: CardStack(cards: spadesStack, showingBack: false, selected: true,),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (spadesStack.isEmpty) ? Border.all(width: 2) : null), 
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            height: 50,
+                            width: 30,
+                            child: Image.asset(
+                              "assets/card_imagery/spade.png",
+                              package: 'playing_cards',
+                              filterQuality: FilterQuality.high,
+                            ),
+                          ),
+                        ),
+                        CardStack(cards: spadesStack, showingBack: false, selected: true),
+                      ]
+                    )
                   ),
                 ),
               ),
@@ -443,8 +495,23 @@ class _SolitareState extends State<Solitare> {
                   child: Container(
                     width: 100,
                     height: 140,
-                    color: Colors.red,
-                    child: CardStack(cards: clubsStack, showingBack: false, selected: true,),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (clubsStack.isEmpty) ? Border.all(width: 2) : null), 
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            height: 50,
+                            width: 30,
+                            child: Image.asset(
+                              "assets/card_imagery/club.png",
+                              package: 'playing_cards',
+                              filterQuality: FilterQuality.high,
+                            ),
+                          ),
+                        ),
+                        CardStack(cards: clubsStack, showingBack: false, selected: true),
+                      ]
+                    )
                   ),
                 ),
               ),
@@ -471,7 +538,7 @@ class _SolitareState extends State<Solitare> {
               //First Column
               SizedBox(
                 width: 100,
-                height: 140 + ((playingColumns[0].length - 1) * 20),
+                height: 140 + (max(playingColumns[0].length - 1, 0) * 20),
                 child: GestureDetector(
                   onTap: () {
                     moveCard(0);
@@ -485,18 +552,14 @@ class _SolitareState extends State<Solitare> {
                     spot: 0,
                     moveCard: moveCard,
                   ) : 
-                  Container(
-                    width: 100,
-                    height: 120,
-                    color: Colors.red,
-                  ),
+                  const EmptyStack(),
                 ),
               ),
 
               //Second Column
               SizedBox(
                 width: 100,
-                height: 140 + ((playingColumns[1].length - 1) * 20),
+                height: 140 + (max(playingColumns[1].length - 1, 0) * 20),
                 child: GestureDetector(
                   onTap: () {
                     moveCard(1);
@@ -510,18 +573,14 @@ class _SolitareState extends State<Solitare> {
                     spot: 1,
                     moveCard: moveCard
                   ) : 
-                  Container(
-                    width: 100,
-                    height: 120,
-                    color: Colors.red,
-                  ),
+                  const EmptyStack()
                 ),
               ),
 
               //Third Column
               SizedBox(
                 width: 100,
-                height: 140 + ((playingColumns[2].length - 1) * 20),
+                height: 140 + (max(playingColumns[2].length - 1, 0) * 20),
                 child: GestureDetector(
                   onTap: () {
                     moveCard(2);
@@ -535,18 +594,14 @@ class _SolitareState extends State<Solitare> {
                       spot: 2,
                       moveCard: moveCard
                   ) :
-                  Container(
-                    width: 100,
-                    height: 120,
-                    color: Colors.red,
-                  ),
+                  const EmptyStack()
                 ),
               ),
 
               //Four Column
               SizedBox(
                 width: 100,
-                height: 140 + ((playingColumns[3].length - 1) * 20),
+                height: 140 + (max(playingColumns[3].length - 1, 0) * 20),
                 child: GestureDetector(
                   onTap: () {
                     moveCard(3);
@@ -560,18 +615,14 @@ class _SolitareState extends State<Solitare> {
                     spot: 3,
                     moveCard: moveCard
                   ) :
-                  Container(
-                    width: 100,
-                    height: 120,
-                    color: Colors.red,
-                  ),
+                  const EmptyStack()
                 ),
               ),
 
               //Fifth Column
               SizedBox(
                 width: 100,
-                height: 140 + ((playingColumns[4].length - 1) * 20),
+                height: 140 + (max(playingColumns[4].length - 1, 0) * 20),
                 child: GestureDetector(
                   onTap: () {
                     moveCard(4);
@@ -585,18 +636,14 @@ class _SolitareState extends State<Solitare> {
                     spot: 4,
                     moveCard: moveCard
                   ) :
-                  Container(
-                    width: 100,
-                    height: 120,
-                    color: Colors.red,
-                  ),
+                  const EmptyStack()
                 ),
               ),
 
               //Sixth Column
               SizedBox(
                 width: 100,
-                height: 140 + ((playingColumns[5].length - 1) * 20),
+                height: 140 + (max(playingColumns[5].length - 1, 0) * 20),
                 child: GestureDetector(
                   onTap: () {
                     moveCard(5);
@@ -610,18 +657,14 @@ class _SolitareState extends State<Solitare> {
                     spot: 5,
                     moveCard: moveCard
                   ) :
-                  Container(
-                    width: 100,
-                    height: 120,
-                    color: Colors.red,
-                  ),
+                  const EmptyStack()
                 ),
               ),
 
               //Seventh Column
               SizedBox(
                 width: 100,
-                height: 140 + ((playingColumns[6].length - 1) * 20),
+                height: 140 + (max(playingColumns[6].length - 1, 0) * 20),
                 child: GestureDetector(
                   onTap: () {
                     moveCard(6);
@@ -635,11 +678,7 @@ class _SolitareState extends State<Solitare> {
                     spot: 6,
                     moveCard: moveCard
                   ) :
-                  Container(
-                    width: 100,
-                    height: 120,
-                    color: Colors.red,
-                  ),
+                  const EmptyStack()
                 ),
               ),
 
@@ -665,11 +704,7 @@ class _SolitareState extends State<Solitare> {
                       height: 140,
                       child: (deck.isNotEmpty) ? 
                         CardStack(cards: deck, showingBack: true, selected: true,) :
-                        Container(
-                          width: 100,
-                          height: 100,
-                          color: Colors.red,
-                        )
+                        const EmptyStack()
                     ),
                   ),
 
@@ -694,11 +729,7 @@ class _SolitareState extends State<Solitare> {
                       height: 140,
                       child: (secondDeck.isNotEmpty) ?
                         CardStack(cards: secondDeck, showingBack: false, selected: selected[7],) :
-                        Container(
-                          width: 100,
-                          height: 140,
-                          color: Colors.red
-                        )
+                        const EmptyStack()
                     ),
                   ),
 
