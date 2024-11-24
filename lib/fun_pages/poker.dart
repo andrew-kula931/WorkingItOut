@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:playing_cards/playing_cards.dart';
 import '../fun_components/empty_stack.dart';
+import '../fun_components/hand.dart';
 
 class Poker extends StatefulWidget{
   const Poker({super.key});
@@ -11,15 +12,23 @@ class Poker extends StatefulWidget{
 
 class _PokerState extends State<Poker> {
 
+  //Card variables
   List<PlayingCard> deck = standardFiftyTwoCardDeck();
   PlayingCard? flopOne;
   PlayingCard? flopTwo;
   PlayingCard? flopThree;
   PlayingCard? turn;
   PlayingCard? river;
+  List<List<PlayingCard>>? competitorHands;
+
+  //Configuration variables
+  int? opponents = 2;
+  List<int> opponentAmount = [1, 2, 3, 4, 5, 6];
 
   void startingGame() {
+    deck = standardFiftyTwoCardDeck();
     deck.shuffle();
+    
   }
 
   @override
@@ -109,6 +118,60 @@ class _PokerState extends State<Poker> {
                 ),
               ]
             ),
+          ),
+
+          const SizedBox(
+            height: 140,
+            width: 140,
+            child: Align(
+              alignment: Alignment(-0.5, 0),
+              child: Hand()
+            ),
+          ),
+
+
+          //Game configuration settings
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 10),
+                        width: 50,
+                        height: 30,
+                        color: Colors.white,
+                        child: DropdownButton<int>(
+                          value: opponents,
+                          items: opponentAmount.map((int amount) {
+                            return DropdownMenuItem<int>(
+                              value: amount,
+                              child: Text(amount.toString()),
+                            );
+                          }).toList(),
+                          onChanged: (int? newAmount) {
+                            setState(() {
+                              opponents = newAmount;
+                            });
+                          },
+                          underline: const SizedBox(),
+                        ),
+                      ),
+                    ),
+                    
+                    ElevatedButton(
+                      onPressed: () {
+
+                      },
+                      child: const Text('Initiate Flop')
+                    ),
+                  ],
+                ),
+              ),
+            ]
           ),
         ]
       )

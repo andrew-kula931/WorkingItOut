@@ -432,7 +432,7 @@ class _SolitareState extends State<Solitare> {
                             ),
                           ),
                         ),
-                        CardStack(cards: playingColumns[7], showingBack: false, selected: true),
+                        CardStack(cards: playingColumns[7], showingBack: false, selected: selected[7]),
                       ]
                     )
                   ),
@@ -467,7 +467,7 @@ class _SolitareState extends State<Solitare> {
                             ),
                           ),
                         ),
-                        CardStack(cards: playingColumns[8], showingBack: false, selected: true),
+                        CardStack(cards: playingColumns[8], showingBack: false, selected: selected[8]),
                       ]
                     )
                   ),
@@ -502,7 +502,7 @@ class _SolitareState extends State<Solitare> {
                             ),
                           ),
                         ),
-                        CardStack(cards: playingColumns[9], showingBack: false, selected: true),
+                        CardStack(cards: playingColumns[9], showingBack: false, selected: selected[9]),
                       ]
                     )
                   ),
@@ -537,7 +537,7 @@ class _SolitareState extends State<Solitare> {
                             ),
                           ),
                         ),
-                        CardStack(cards: playingColumns[10], showingBack: false, selected: true),
+                        CardStack(cards: playingColumns[10], showingBack: false, selected: selected[10]),
                       ]
                     )
                   ),
