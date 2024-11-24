@@ -18,18 +18,14 @@ class _SolitareState extends State<Solitare> {
   //Variables to set up the card game
   List<PlayingCard> deck = standardFiftyTwoCardDeck();
   List<PlayingCard> secondDeck = [];
-  List<List<PlayingCard>> playingColumns = [[], [], [], [], [], [], []];
+  List<List<PlayingCard>> playingColumns = [[], [], [], [], [], [], [], [], [], [], []];
   List<List<bool>> showingBack = [[], [], [], [], [], [], []];
-  List<PlayingCard> diamondsStack = [];
-  List<PlayingCard> heartsStack = [];
-  List<PlayingCard> spadesStack = [];
-  List<PlayingCard> clubsStack = [];
 
   //Selecting variables
   int? selectedIndex;
   int? cardIndex;
   List<PlayingCard> changingCard = [];
-  List<bool> selected = [true, true, true, true, true, true, true, true];
+  List<bool> selected = [true, true, true, true, true, true, true, true, true, true, true, true];
 
   @override
   void initState() {
@@ -276,6 +272,8 @@ class _SolitareState extends State<Solitare> {
     }
 
     //Update page
+    selectedIndex = null;
+    changingCard = [];
     resetBorders();
     setState(() {});
   }
@@ -289,8 +287,12 @@ class _SolitareState extends State<Solitare> {
       if (playingColumns[currentIndex].isNotEmpty) {
         selectedIndex = currentIndex;
 
+        //Checks to see if one of the top stacks were clicked
+        if (currentIndex > 6) {
+          changingCard.add(playingColumns[currentIndex].last);
+
         //Checks to see if there is one or multiple cards
-        if (cardIndex == null || cardIndex == playingColumns[currentIndex].length - 1) {
+        } else if (cardIndex == null || cardIndex == playingColumns[currentIndex].length - 1) {
           changingCard.add(playingColumns[currentIndex].last);
 
         //This handles multiple cards selected
@@ -326,6 +328,7 @@ class _SolitareState extends State<Solitare> {
         changingCard = [];
         selectedIndex = null;
       }
+
     //Occurs if card is placeable
     } else {
       if (cardIsPlaceable(playingColumns[currentIndex].last)) {
@@ -338,6 +341,15 @@ class _SolitareState extends State<Solitare> {
           secondDeck.removeLast();
 
           changingCard.removeLast();
+
+        //Runs if card is being moved from the top piles
+        } else if (selectedIndex! > 6) {
+          playingColumns[currentIndex].add(changingCard[0]);
+          showingBack[currentIndex].add(false);
+          playingColumns[selectedIndex!].removeLast();
+
+          changingCard = [];
+          selectedIndex = null;
 
         //Runs when a card is being moved between piles after selection
         } else {
@@ -395,14 +407,18 @@ class _SolitareState extends State<Solitare> {
               //Top Diamond stack
               GestureDetector(
                 onTap: () {
-                  moveCardOnTop(diamondsStack.isNotEmpty ? diamondsStack.last : null, Suit.diamonds, diamondsStack);
+                  if (changingCard.isNotEmpty) {
+                    moveCardOnTop(playingColumns[7].isNotEmpty ? playingColumns[7].last : null, Suit.diamonds, playingColumns[7]);
+                  } else {
+                    moveCard(7);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Container(
                     width: 100,
                     height: 140,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (diamondsStack.isEmpty) ? Border.all(width: 2) : null), 
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (playingColumns[7].isEmpty) ? Border.all(width: 2) : null), 
                     child: Stack(
                       children: [
                         Center(
@@ -416,7 +432,7 @@ class _SolitareState extends State<Solitare> {
                             ),
                           ),
                         ),
-                        CardStack(cards: diamondsStack, showingBack: false, selected: true),
+                        CardStack(cards: playingColumns[7], showingBack: false, selected: true),
                       ]
                     )
                   ),
@@ -426,14 +442,18 @@ class _SolitareState extends State<Solitare> {
               //Top Heart Stack
               GestureDetector(
                 onTap: () {
-                  moveCardOnTop(heartsStack.isNotEmpty ? heartsStack.last : null, Suit.hearts, heartsStack);
+                  if (changingCard.isNotEmpty) {
+                    moveCardOnTop(playingColumns[8].isNotEmpty ? playingColumns[8].last : null, Suit.hearts, playingColumns[8]);
+                  } else {
+                    moveCard(8);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Container(
                     width: 100,
                     height: 140,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (heartsStack.isEmpty) ? Border.all(width: 2) : null), 
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (playingColumns[8].isEmpty) ? Border.all(width: 2) : null), 
                     child: Stack(
                       children: [
                         Center(
@@ -447,7 +467,7 @@ class _SolitareState extends State<Solitare> {
                             ),
                           ),
                         ),
-                        CardStack(cards: heartsStack, showingBack: false, selected: true),
+                        CardStack(cards: playingColumns[8], showingBack: false, selected: true),
                       ]
                     )
                   ),
@@ -457,14 +477,18 @@ class _SolitareState extends State<Solitare> {
               //Top Spades Stack
               GestureDetector(
                 onTap: () {
-                  moveCardOnTop(spadesStack.isNotEmpty ? spadesStack.last : null, Suit.spades, spadesStack);
+                  if (changingCard.isNotEmpty) {
+                    moveCardOnTop(playingColumns[9].isNotEmpty ? playingColumns[9].last : null, Suit.spades, playingColumns[9]);
+                  } else {
+                    moveCard(9);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Container(
                     width: 100,
                     height: 140,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (spadesStack.isEmpty) ? Border.all(width: 2) : null), 
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (playingColumns[9].isEmpty) ? Border.all(width: 2) : null), 
                     child: Stack(
                       children: [
                         Center(
@@ -478,7 +502,7 @@ class _SolitareState extends State<Solitare> {
                             ),
                           ),
                         ),
-                        CardStack(cards: spadesStack, showingBack: false, selected: true),
+                        CardStack(cards: playingColumns[9], showingBack: false, selected: true),
                       ]
                     )
                   ),
@@ -488,14 +512,18 @@ class _SolitareState extends State<Solitare> {
               //Top Clubs Stack
               GestureDetector(
                 onTap: () {
-                  moveCardOnTop(clubsStack.isNotEmpty ? clubsStack.last : null, Suit.clubs, clubsStack);
+                  if (changingCard.isNotEmpty) {
+                    moveCardOnTop(playingColumns[10].isNotEmpty ? playingColumns[10].last : null, Suit.clubs, playingColumns[10]);
+                  } else {
+                    moveCard(10);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Container(
                     width: 100,
                     height: 140,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (clubsStack.isEmpty) ? Border.all(width: 2) : null), 
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: (playingColumns[10].isEmpty) ? Border.all(width: 2) : null), 
                     child: Stack(
                       children: [
                         Center(
@@ -509,7 +537,7 @@ class _SolitareState extends State<Solitare> {
                             ),
                           ),
                         ),
-                        CardStack(cards: clubsStack, showingBack: false, selected: true),
+                        CardStack(cards: playingColumns[10], showingBack: false, selected: true),
                       ]
                     )
                   ),
@@ -696,6 +724,9 @@ class _SolitareState extends State<Solitare> {
                     onTap: () {
                       if (deck.isNotEmpty) {
                         secondDeck.add(deck.removeLast());
+                        changingCard = [];
+                        selectedIndex = null;
+                        cardIndex = null;
                       }
                       resetBorders();
                       setState(() {});
@@ -720,7 +751,7 @@ class _SolitareState extends State<Solitare> {
                         changingCard.add(secondDeck.last);
                         
                         resetBorders();
-                        selected[7] = false;
+                        selected[11] = false;
 
                         setState(() {});
                       }
@@ -729,7 +760,7 @@ class _SolitareState extends State<Solitare> {
                       width: 100,
                       height: 140,
                       child: (secondDeck.isNotEmpty) ?
-                        CardStack(cards: secondDeck, showingBack: false, selected: selected[7],) :
+                        CardStack(cards: secondDeck, showingBack: false, selected: selected[11],) :
                         const EmptyStack()
                     ),
                   ),

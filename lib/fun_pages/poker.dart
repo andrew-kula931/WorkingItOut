@@ -64,38 +64,48 @@ class _PokerState extends State<Poker> {
                   const EmptyStack()
                 ),
 
-                
+                //FlopTwo
                 Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: SizedBox(
+                  child: (flopTwo != null) ? SizedBox(
                     height: 140,
                     width: 100,
                     child: PlayingCardView(card: deck[1], showBack: false, elevation: 3.0),
-                  ),
+                  ) :
+                  const EmptyStack()
                 ),
+
+                //FlopThree
                 Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: SizedBox(
+                  child: (flopThree != null) ? SizedBox(
                     height: 140,
                     width: 100,
                     child: PlayingCardView(card: deck[2], showBack: false, elevation: 3.0),
-                  ),
+                  ) :
+                  const EmptyStack()
                 ),
+
+                //Turn
                 Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: SizedBox(
+                  child: (turn != null) ? SizedBox(
                     height: 140,
                     width: 100,
                     child: PlayingCardView(card: deck[3], showBack: false, elevation: 3.0),
-                  ),
+                  ) :
+                  const EmptyStack()
                 ),
+
+                //River
                 Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: SizedBox(
+                  child: (river != null) ? SizedBox(
                     height: 140,
                     width: 100,
                     child: PlayingCardView(card: deck[4], showBack: false, elevation: 3.0),
-                  ),
+                  ) :
+                  const EmptyStack()
                 ),
               ]
             ),
