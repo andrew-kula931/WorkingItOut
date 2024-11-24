@@ -10,6 +10,7 @@ import 'gaming_pages/game_profile.dart';
 import 'fun_pages/spinner.dart';
 import 'data/spinner_db.dart';
 import 'fun_pages/solitare.dart';
+import 'fun_pages/poker.dart';
 
 void main() async {
 
@@ -76,6 +77,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
   var gameListColor = Colors.lightGreen;
   var recentGameColor = Colors.lightGreen;
   var solitareListColor = Colors.lightGreen;
+  var pokerListColor = Colors.lightGreen;
 
   //Dropdown menu variables
   bool gamingMenu = false;
@@ -636,7 +638,23 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                 ),
 
                                 //Poker Menu
-                                const Text('Poker'),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Poker()));
+                                  },
+                                  child: MouseRegion(
+                                    onEnter: (event) => setState(() => pokerListColor = Colors.green),
+                                    onExit: (event) => setState(() => pokerListColor = Colors.lightGreen),
+                                    child: Container (
+                                      decoration: BoxDecoration(color: pokerListColor),
+                                      width: MediaQuery.of(context).size.width * .25,
+                                      height: 40,
+                                      child: const Center(
+                                        child: Text("Poker"),
+                                      )
+                                    )
+                                  )
+                                ),
 
                                 //Spinner Menu
                                 GestureDetector(

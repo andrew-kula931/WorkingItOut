@@ -697,6 +697,7 @@ class _SolitareState extends State<Solitare> {
                       if (deck.isNotEmpty) {
                         secondDeck.add(deck.removeLast());
                       }
+                      resetBorders();
                       setState(() {});
                     },
                     child: SizedBox(

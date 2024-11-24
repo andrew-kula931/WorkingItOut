@@ -87,4 +87,32 @@ SizedBox(
     ),
   )
 ),
+
+
+
+ShapeBorder shape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(8),
+  side: BorderSide(color: Colors.black, width: 1));
+FlatCardFan(children: [
+  PlayingCardView(
+    card: PlayingCard(Suit.hearts, CardValue.ace),
+    showBack: true,
+    elevation: 3.0,
+    shape: shape),
+  PlayingCardView(
+      card: PlayingCard(Suit.hearts, CardValue.ace),
+      showBack: true,
+      elevation: 3.0,
+      shape: shape),
+  PlayingCardView(
+      card: PlayingCard(Suit.hearts, CardValue.ace),
+      showBack: true,
+      elevation: 3.0,
+      shape: shape),
+  PlayingCardView(
+      card: PlayingCard(Suit.hearts, CardValue.ace),
+      elevation: 3.0,
+      shape: shape)
+])
+
 */
