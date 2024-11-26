@@ -6,7 +6,8 @@ class Hand extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Stack( 
+    return 
+    Stack( 
       children: [
         Align(
           alignment: const Alignment(0, 0),

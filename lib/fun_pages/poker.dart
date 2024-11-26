@@ -19,16 +19,40 @@ class _PokerState extends State<Poker> {
   PlayingCard? flopThree;
   PlayingCard? turn;
   PlayingCard? river;
-  List<List<PlayingCard>>? competitorHands;
+  List<List<PlayingCard>> competitorHands = [[], [], [], [], [], [], []];
 
   //Configuration variables
-  int? opponents = 2;
+  int opponents = 2;
   List<int> opponentAmount = [1, 2, 3, 4, 5, 6];
+
+  //Game variables
+  bool gameHasStarted = false;
+  TextEditingController raiseAmount = TextEditingController();
 
   void startingGame() {
     deck = standardFiftyTwoCardDeck();
     deck.shuffle();
+    for (int i = 0; i <= opponents; i++) {
+      competitorHands[i].add(deck.removeLast());
+      competitorHands[i].add(deck.removeLast());
+    }
+
+    gameHasStarted = true;
     
+  }
+
+  void nextMove() {
+    if (flopOne == null) {
+      flopOne = deck.removeLast();
+      flopTwo = deck.removeLast();
+      flopThree = deck.removeLast();
+    } else if (turn == null) {
+      turn = deck.removeLast();
+    } else if (river == null) {
+      river = deck.removeLast();
+    }
+
+    setState(() {});
   }
 
   @override
@@ -68,7 +92,7 @@ class _PokerState extends State<Poker> {
                   child: (flopOne != null) ? SizedBox(
                     height: 140,
                     width: 100,
-                    child: PlayingCardView(card: deck[0], showBack: false, elevation: 3.0),
+                    child: PlayingCardView(card: flopOne!, showBack: false, elevation: 3.0),
                   ) :
                   const EmptyStack()
                 ),
@@ -79,7 +103,7 @@ class _PokerState extends State<Poker> {
                   child: (flopTwo != null) ? SizedBox(
                     height: 140,
                     width: 100,
-                    child: PlayingCardView(card: deck[1], showBack: false, elevation: 3.0),
+                    child: PlayingCardView(card: flopTwo!, showBack: false, elevation: 3.0),
                   ) :
                   const EmptyStack()
                 ),
@@ -90,7 +114,7 @@ class _PokerState extends State<Poker> {
                   child: (flopThree != null) ? SizedBox(
                     height: 140,
                     width: 100,
-                    child: PlayingCardView(card: deck[2], showBack: false, elevation: 3.0),
+                    child: PlayingCardView(card: flopThree!, showBack: false, elevation: 3.0),
                   ) :
                   const EmptyStack()
                 ),
@@ -101,7 +125,7 @@ class _PokerState extends State<Poker> {
                   child: (turn != null) ? SizedBox(
                     height: 140,
                     width: 100,
-                    child: PlayingCardView(card: deck[3], showBack: false, elevation: 3.0),
+                    child: PlayingCardView(card: turn!, showBack: false, elevation: 3.0),
                   ) :
                   const EmptyStack()
                 ),
@@ -112,7 +136,7 @@ class _PokerState extends State<Poker> {
                   child: (river != null) ? SizedBox(
                     height: 140,
                     width: 100,
-                    child: PlayingCardView(card: deck[4], showBack: false, elevation: 3.0),
+                    child: PlayingCardView(card: river!, showBack: false, elevation: 3.0),
                   ) :
                   const EmptyStack()
                 ),
@@ -120,15 +144,135 @@ class _PokerState extends State<Poker> {
             ),
           ),
 
-          const SizedBox(
-            height: 140,
-            width: 140,
+          //Hands
+          //CPU 1
+          SizedBox(
+            width: double.infinity,
+            height: double.infinity,
             child: Align(
-              alignment: Alignment(-0.5, 0),
-              child: Hand()
+              alignment: const Alignment(-0.92, 0),
+              child: SizedBox(
+                height: 140,
+                width: 140,
+                child: (gameHasStarted) ? 
+                  const Hand() :
+                  const Icon(Icons.person, size: 100)
+              ),
             ),
           ),
 
+          //CPU 2
+          if (opponents >= 2)
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Align(
+                alignment: const Alignment(0.92, 0),
+                child: SizedBox(
+                  height: 140,
+                  width: 140,
+                  child: (gameHasStarted) ? 
+                  const Hand() :
+                  const Icon(Icons.person, size: 100)
+                ),
+              ),
+            ),
+
+          //CPU 3
+          if (opponents >= 3)
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Align(
+                alignment: const Alignment(-0.85, -0.82),
+                child: SizedBox(
+                  height: 140,
+                  width: 140,
+                  child: (gameHasStarted) ? 
+                  const Hand() :
+                  const Icon(Icons.person, size: 100)
+                ),
+              ),
+            ),
+
+          //CPU 4
+          if (opponents >= 4)
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Align(
+                alignment: const Alignment(0.85, -0.82),
+                child: SizedBox(
+                  height: 140,
+                  width: 140,
+                  child: (gameHasStarted) ? 
+                  const Hand() :
+                  const Icon(Icons.person, size: 100)
+                ),
+              ),
+            ),
+
+          //CPU 5
+          if (opponents >= 5)
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Align(
+                alignment: const Alignment(-0.85, 0.82),
+                child: SizedBox(
+                  height: 140,
+                  width: 140,
+                  child: (gameHasStarted) ? 
+                  const Hand() :
+                  const Icon(Icons.person, size: 100)
+                ),
+              ),
+            ),
+
+          //CPU 6
+          if (opponents == 6)
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Align(
+                alignment: const Alignment(0.85, 0.82),
+                child: SizedBox(
+                  height: 140,
+                  width: 140,
+                  child: (gameHasStarted) ? 
+                  const Hand() :
+                  const Icon(Icons.person, size: 100)
+                ),
+              ),
+            ),
+
+          //Player hand
+          if (gameHasStarted)
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Align(
+                alignment: const Alignment(0, 0.8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2),
+                      child: SizedBox(
+                        height: 140,
+                        width: 100,
+                        child: PlayingCardView(card: competitorHands[0][0], showBack: false, elevation: 3.0)
+                      ),
+                    ),
+                    SizedBox(
+                      height: 140,
+                      width: 100,
+                      child: PlayingCardView(card: competitorHands[0][1], showBack: false, elevation: 3.0)
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
           //Game configuration settings
           Row(
@@ -154,7 +298,9 @@ class _PokerState extends State<Poker> {
                           }).toList(),
                           onChanged: (int? newAmount) {
                             setState(() {
-                              opponents = newAmount;
+                              if (newAmount != null) {
+                                opponents = newAmount;
+                              }
                             });
                           },
                           underline: const SizedBox(),
@@ -162,12 +308,54 @@ class _PokerState extends State<Poker> {
                       ),
                     ),
                     
+                    //Starting Game
                     ElevatedButton(
                       onPressed: () {
-
+                        setState(() {
+                          startingGame();
+                        });
                       },
-                      child: const Text('Initiate Flop')
+                      child: const Text('Start Game')
                     ),
+
+                    //Call
+                    ElevatedButton(
+                      onPressed: () {
+                        nextMove();
+                      },
+                      child: const Text('Call'),
+                    ),
+
+                    //Fold
+                    ElevatedButton(
+                      onPressed: () {
+                        nextMove();
+                      },
+                      child: const Text('Fold'),
+                    ),
+
+                    //Raise
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            nextMove();
+                          },
+                          child: const Text('Raise'),
+                        ),
+                        SizedBox(
+                          height: 45,
+                          width: 80,
+                          child: TextField(
+                            controller: raiseAmount,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              filled: true),
+                          ),
+                        ),
+                      ]
+                    )
                   ],
                 ),
               ),
