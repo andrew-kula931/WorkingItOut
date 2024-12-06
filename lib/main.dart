@@ -167,6 +167,13 @@ class _WorkoutAppState extends State<WorkoutApp> {
     }
   }
 
+
+/*
+    Widget Tree Starter here
+*/
+
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -235,7 +242,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
                       ),
                       SizedBox(
                         height: 60,
-                        width: MediaQuery.of(context).size.width * .8,
+                        width: MediaQuery.of(context).size.width * .7,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: scheduledWorkouts.length,

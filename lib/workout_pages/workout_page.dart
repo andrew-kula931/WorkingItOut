@@ -148,7 +148,7 @@ class _WorkoutPage extends State<WorkoutPage> {
           ),
           Column(
             children: [
-              Row(
+              (MediaQuery.of(context).size.width > 500) ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   const Text('Areas Worked: '),
@@ -164,11 +164,43 @@ class _WorkoutPage extends State<WorkoutPage> {
                     ),
                   ),
                 ],
+              ) : Center(
+                child: Column(
+                  children: [
+                    const Text('Areas Worked: '),
+                    Container(
+                      height: 70,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1),
+                        borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text(worked.join(', ')),
+                      ),
+                    ),
+                  ]
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 6),
-                child: Row(
+                child: (MediaQuery.of(context).size.width > 500) ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Text('Areas to Work: '),
+                    Container(
+                      height: 70,
+                      width: 400,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1),
+                        borderRadius: BorderRadius.circular(12)),
+                      child: Padding( 
+                        padding: const EdgeInsets.all(4),
+                        child: Text(notworked.join(', ')),
+                      ),
+                    ),
+                  ],
+                ) : Column(
                   children: [
                     const Text('Areas to Work: '),
                     Container(
@@ -194,54 +226,59 @@ class _WorkoutPage extends State<WorkoutPage> {
           /*
           Operation buttons
           */
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const RoutinePlanner()));
-                },
-                child: const Text('Routine Planner'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkoutArchive()))
-                  .then((value) {
-                    countAreas();
-                    setState(() {});
-                  });
-                },
-                child: const Text('Document Workout'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return AddWorkout(workoutBox: _workoutBox);
-                    },
-                  ).then((value) {
-                    setState(() {});
-                  });
-                },
-                child: const Text('Add Workout'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return WNotesList(notesList: _workoutNotes);
-                    }
-                  ).then((value) {
-                    setState(() {});
-                  });
-                },
-                child: const Text('Workout Notes'),
-              ),
-            ],
+          Center(
+            child: Wrap(
+              spacing: 10.0,
+              runSpacing: 10.0,
+              alignment: WrapAlignment.center,
+              runAlignment: WrapAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const RoutinePlanner()));
+                  },
+                  child: const Text('Routine Planner'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkoutArchive()))
+                    .then((value) {
+                      countAreas();
+                      setState(() {});
+                    });
+                  },
+                  child: const Text('Document Workout'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return AddWorkout(workoutBox: _workoutBox);
+                      },
+                    ).then((value) {
+                      setState(() {});
+                    });
+                  },
+                  child: const Text('Add Workout'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return WNotesList(notesList: _workoutNotes);
+                      }
+                    ).then((value) {
+                      setState(() {});
+                    });
+                  },
+                  child: const Text('Workout Notes'),
+                ),
+              ],
+            ),
           ),
 
           //List of workouts created

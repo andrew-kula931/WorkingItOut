@@ -48,7 +48,8 @@ class _GamingHomeState extends State<GamingHome> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
+              Container(
+                padding: const EdgeInsets.only(left: 10),
                 height: 175,
                 width: MediaQuery.of(context).size.width * 0.2,
                 child: const Center(
@@ -57,7 +58,7 @@ class _GamingHomeState extends State<GamingHome> {
               
               //Dynamic list of recently played games
               SizedBox(
-                width: 500,
+                width: MediaQuery.of(context).size.width * 0.7,
                 height: 180,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
