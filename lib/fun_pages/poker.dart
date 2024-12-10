@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:playing_cards/playing_cards.dart';
 import '../fun_components/empty_stack.dart';
 import '../fun_components/hand.dart';
@@ -330,7 +331,13 @@ class _PokerState extends State<Poker> {
                         ),
                       ],
                     ),
-                    Text(money[0].toString()),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.attach_money),
+                        Text(money[0].toString(), style: const TextStyle(fontWeight: FontWeight.w700))
+                      ],
+                    )
                   ]
                 ), 
               ),
@@ -370,54 +377,75 @@ class _PokerState extends State<Poker> {
                       ),
                     ),
                     
-                    //Starting Game
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          startingGame();
-                        });
-                      },
-                      child: const Text('Start Game')
-                    ),
+                    if (!gameHasStarted)
+                      //Starting Game
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            startingGame();
+                          });
+                        },
+                        child: const Text('Start Game')
+                      ),
 
-                    //Call
-                    ElevatedButton(
-                      onPressed: () {
-                        nextMove();
-                      },
-                      child: const Text('Call'),
-                    ),
+                    if (gameHasStarted)
+                      //Call
+                      ElevatedButton(
+                        onPressed: () {
+                          nextMove();
+                        },
+                        child: const Text('Call'),
+                      ),
 
-                    //Fold
-                    ElevatedButton(
-                      onPressed: () {
-                        nextMove();
-                      },
-                      child: const Text('Fold'),
-                    ),
-
-                    //Raise
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ElevatedButton(
+                    if (gameHasStarted)
+                      //Fold
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: ElevatedButton(
                           onPressed: () {
                             nextMove();
                           },
-                          child: const Text('Raise'),
+                          child: const Text('Fold'),
                         ),
-                        SizedBox(
-                          height: 45,
-                          width: 80,
-                          child: TextField(
-                            controller: raiseAmount,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              filled: true),
+                      ),
+
+                    if (gameHasStarted)
+                      //Raise
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(padding: const EdgeInsets.only(right: 4),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              pot += int.parse(raiseAmount.text);
+                              money[0] -= int.parse(raiseAmount.text);
+                              nextMove();
+                            },
+                            child: const Text('Raise'),
+                            ),
                           ),
-                        ),
-                      ]
-                    )
+                          SizedBox(
+                            height: 45,
+                            width: 80,
+                            child: TextField(
+                              controller: raiseAmount,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                filled: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ]
+                            ),
+                          ),
+                        ]
+                      ),
+
+                    if (gameHasStarted)
+                      Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Text(pot.toString(), style: const TextStyle(fontSize: 20))  
+                      )
                   ],
                 ),
               ),
