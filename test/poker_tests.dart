@@ -49,4 +49,71 @@ void main() {
       expect(findFlush(playerCards), equals(false));
     });
   });
+
+  group('find card strength', () {
+    test('royal flush', () {
+      expect(
+          findHandStrength(
+              PlayingCard(Suit.clubs, CardValue.ace),
+              PlayingCard(Suit.clubs, CardValue.king),
+              PlayingCard(Suit.clubs, CardValue.queen),
+              PlayingCard(Suit.clubs, CardValue.jack),
+              PlayingCard(Suit.clubs, CardValue.ten),
+              null,
+              null),
+          equals(100));
+    });
+
+    test('one pair', () {
+      expect(
+          findHandStrength(
+              PlayingCard(Suit.clubs, CardValue.ace),
+              PlayingCard(Suit.spades, CardValue.ace),
+              PlayingCard(Suit.clubs, CardValue.queen),
+              PlayingCard(Suit.clubs, CardValue.jack),
+              PlayingCard(Suit.clubs, CardValue.ten),
+              null,
+              null),
+          equals(20));
+    });
+
+    test('king, jack high', () {
+      expect(
+          findHandStrength(
+              PlayingCard(Suit.clubs, CardValue.three),
+              PlayingCard(Suit.spades, CardValue.two),
+              PlayingCard(Suit.clubs, CardValue.king),
+              PlayingCard(Suit.clubs, CardValue.jack),
+              PlayingCard(Suit.clubs, CardValue.ten),
+              null,
+              null),
+          equals(12));
+    });
+
+    test('queen, jack high', () {
+      expect(
+          findHandStrength(
+              PlayingCard(Suit.clubs, CardValue.three),
+              PlayingCard(Suit.spades, CardValue.two),
+              PlayingCard(Suit.clubs, CardValue.queen),
+              PlayingCard(Suit.clubs, CardValue.jack),
+              PlayingCard(Suit.clubs, CardValue.ten),
+              null,
+              null),
+          equals(11));
+    });
+
+    test('full house', () {
+      expect(
+          findHandStrength(
+              PlayingCard(Suit.clubs, CardValue.three),
+              PlayingCard(Suit.spades, CardValue.three),
+              PlayingCard(Suit.clubs, CardValue.three),
+              PlayingCard(Suit.clubs, CardValue.seven),
+              PlayingCard(Suit.clubs, CardValue.seven),
+              PlayingCard(Suit.hearts, CardValue.eight),
+              null),
+          equals(80));
+    });
+  });
 }
