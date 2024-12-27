@@ -20,11 +20,12 @@
 */
 
 import 'package:playing_cards/playing_cards.dart';
+import 'dart:math';
 
 //File state variables
 class Result {
   final Decision decision;
-  final int bet;
+  final double bet;
 
   Result(this.decision, this.bet);
 }
@@ -32,6 +33,10 @@ class Result {
 enum Decision { CALL, FOLD, RAISE }
 
 enum PairType { FULLHOUSE, FOUROFAKIND, THREEOFAKIND, TWOPAIR, ONEPAIR }
+
+enum BetStanding { NONE, LOW, MEDIUM, HIGH, ALLIN }
+
+Random random = Random();
 
 late int topCard;
 late int topStraightCard;
@@ -70,7 +75,7 @@ int getCardValue(PlayingCard card) {
   }
 }
 
-bool findStraight(List<PlayingCard> cards) {
+bool findStraight(List<PlayingCard> cards, bool potential) {
   List<int> values = [];
 
   for (var card in cards) {
@@ -97,7 +102,11 @@ bool findStraight(List<PlayingCard> cards) {
     }
 
     if (straight.length == 5) {
-      topStraightCard = straight[0];
+      topStraightCard = straight[0]; //For royal flush
+      return true;
+    }
+
+    if (potential && straight.length == 4) {
       return true;
     }
   }
@@ -105,7 +114,7 @@ bool findStraight(List<PlayingCard> cards) {
   return false;
 }
 
-bool findFlush(List<PlayingCard> cards) {
+bool findFlush(List<PlayingCard> cards, bool potential) {
   int diamonds = 0;
   int hearts = 0;
   int spades = 0;
@@ -132,6 +141,11 @@ bool findFlush(List<PlayingCard> cards) {
   }
 
   if (diamonds >= 5 || hearts >= 5 || spades >= 5 || clubs >= 5) {
+    return true;
+  }
+
+  if (potential &&
+      (diamonds == 4 || hearts == 4 || spades == 4 || clubs == 4)) {
     return true;
   }
 
@@ -217,14 +231,14 @@ int findHandStrength(
   //All else CardValue / 2
 
   //Royal Flush
-  if (findStraight(availableCards) &&
-      findFlush(availableCards) &&
+  if (findStraight(availableCards, false) &&
+      findFlush(availableCards, false) &&
       topStraightCard == 14) {
     return 100;
   }
 
   //Straight Flush
-  if (findStraight(availableCards) && findFlush(availableCards)) {
+  if (findStraight(availableCards, false) && findFlush(availableCards, false)) {
     return 99;
   }
 
@@ -239,12 +253,12 @@ int findHandStrength(
   }
 
   //Flush
-  if (findFlush(availableCards)) {
+  if (findFlush(availableCards, false)) {
     return 60;
   }
 
   //Straight
-  if (findStraight(availableCards)) {
+  if (findStraight(availableCards, false)) {
     return 50;
   }
 
@@ -260,6 +274,11 @@ int findHandStrength(
 
   //One Pair
   if (findPairs(availableCards, PairType.ONEPAIR)) {
+    return 20;
+  }
+
+  //Check for possible stright or possible flush
+  if (findStraight(availableCards, true) || findFlush(availableCards, true)) {
     return 20;
   }
 
@@ -280,7 +299,116 @@ Result makeDecision(
     PlayingCard? flop3,
     PlayingCard? turn,
     PlayingCard? river,
+    double currentCash,
     double currentRoundBet,
-    double totalBet) {
-  return Result(Decision.FOLD, 0);
+    double pot,
+    int round) {
+  //Gets hand strength and adjusts it for the current round
+  //Round 1 -> Starting hand
+  //Round 2 -> Flop
+  //Round 3 -> Turn
+  //Round 4 -> River
+  int handStrength =
+      findHandStrength(handOne, handTwo, flop1, flop2, flop3, turn, river);
+  late double adjustedHand;
+  switch (round) {
+    case 1:
+      adjustedHand = handStrength * 4.5;
+      break;
+    case 2:
+      adjustedHand = handStrength * 2;
+      break;
+    case 3:
+      adjustedHand = handStrength * 1.2;
+      break;
+    default:
+      adjustedHand = handStrength.toDouble();
+      break;
+  }
+
+  //Checks their standing and how much is in the pot
+  //This will affect how much bot bets
+  final double percentOfMoney = ((pot + currentRoundBet) / currentCash);
+  late BetStanding roundStakes;
+  if (percentOfMoney == 0) {
+    roundStakes = BetStanding.NONE;
+  } else if (percentOfMoney <= .10) {
+    roundStakes = BetStanding.LOW;
+  } else if (percentOfMoney <= .20) {
+    roundStakes = BetStanding.MEDIUM;
+  } else if (percentOfMoney <= .99) {
+    roundStakes = BetStanding.HIGH;
+  } else {
+    roundStakes = BetStanding.ALLIN;
+  }
+
+  //Generates randomness based on the bot's current handStrength
+  //winChance is used to calculate their odds of winning
+  late int winChance;
+  if (adjustedHand > 90) {
+    winChance = 100;
+  } else if (adjustedHand > 50) {
+    winChance = 98;
+  } else if (adjustedHand > 40) {
+    winChance = 95;
+  } else if (adjustedHand >= 30) {
+    winChance = 80;
+  } else if (adjustedHand >= 20) {
+    winChance = 50;
+  } else {
+    winChance = 30;
+  }
+
+  //This increases the betStanding
+  if (winChance > 97) {
+    roundStakes =
+        BetStanding.values[(roundStakes.index + 1) % BetStanding.values.length];
+
+    //This is for bounds checking as the operation above wraps
+    if (roundStakes == BetStanding.NONE) {
+      roundStakes = BetStanding.ALLIN;
+    }
+  }
+
+  //Rolls for whether the bot will bet
+  int randomChance = random.nextInt(100);
+  int randomChance2 = random.nextInt(100);
+  bool willBet = (randomChance <= winChance) ? true : false;
+  bool stayInAnyways = (randomChance2 <= winChance) ? true : false;
+
+  //Now runs early outs for for whether the bot folds or calls
+  if (percentOfMoney > currentCash * 0.4 && winChance < 50) {
+    //Autofold
+    return Result(Decision.FOLD, 0);
+  }
+
+  if (!willBet && currentRoundBet == 0) {
+    return Result(Decision.CALL, 0);
+  }
+
+  if (!willBet && stayInAnyways) {
+    return Result(Decision.CALL, 0);
+  }
+
+  if (!willBet) {
+    return Result(Decision.FOLD, 0);
+  }
+
+  //Now decides how much the bot will willing to bet
+  double roundScore(double bet) {
+    return (bet * 20).round() / 20;
+  }
+
+  switch (roundStakes) {
+    case BetStanding.NONE:
+      return Result(Decision.RAISE, 1.0);
+    case BetStanding.LOW:
+      return Result(Decision.RAISE, roundScore(currentCash * 0.01));
+    case BetStanding.MEDIUM:
+      return Result(Decision.RAISE, roundScore(currentCash * 0.05));
+    case BetStanding.HIGH:
+      return Result(Decision.RAISE, roundScore(currentCash * 0.15));
+    case BetStanding.ALLIN:
+      return Result(Decision.RAISE, currentCash);
+  }
 }
