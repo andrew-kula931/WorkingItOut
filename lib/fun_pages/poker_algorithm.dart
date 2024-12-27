@@ -1,24 +1,5 @@
 // ignore_for_file: constant_identifier_names
 
-/*
-  Takes in parameters:
-    Card in hand 1
-    Card in hand 2
-    Flop 1?
-    Flop 2?
-    Flop 3?
-    Turn?
-    River?
-    Current round bet
-    Total bet
-
-  Outputs
-    Decision (Call, Fold)
-    Bet amount?
-
-
-*/
-
 import 'package:playing_cards/playing_cards.dart';
 import 'dart:math';
 
