@@ -37,6 +37,8 @@ class _PokerState extends State<Poker> {
   bool gameHasStarted = false;
   TextEditingController raiseAmount = TextEditingController();
   int round = 0;
+  List<int> folded = [];
+  int callCounter = 0;
 
   void startingGame() {
     deck = standardFiftyTwoCardDeck();
@@ -46,10 +48,15 @@ class _PokerState extends State<Poker> {
       competitorHands[i].add(deck.removeLast());
     }
 
+    //Makes sure that all the game state variables have been reset
+    folded = [];
+    callCounter = 0;
+
     gameHasStarted = true;
   }
 
   void nextMove() {
+    currentBet = 0;
     if (flopOne == null) {
       flopOne = deck.removeLast();
       flopTwo = deck.removeLast();
@@ -65,6 +72,11 @@ class _PokerState extends State<Poker> {
 
   Future<void> botMoves(int round) async {
     for (int i = 1; i <= opponents; i++) {
+      if (folded.contains(i)) {
+        callCounter++;
+        continue;
+      }
+
       Result botDecision = makeDecision(
           competitorHands[i][0],
           competitorHands[i][1],
@@ -80,14 +92,16 @@ class _PokerState extends State<Poker> {
 
       switch (botDecision.decision) {
         case Decision.FOLD:
-          //Handle the bot folding
-          print("Bot folded");
+          print('bot $i folded');
+          folded.add(i);
           break;
         case Decision.CALL:
+          print('bot $i called');
           money[i] -= currentBet;
           pot += currentBet;
           break;
         case Decision.RAISE:
+          print('bot $i raised ${botDecision.bet}');
           double totalMoney = currentBet + botDecision.bet;
           currentBet += botDecision.bet;
           money[i] -= totalMoney;
@@ -96,14 +110,9 @@ class _PokerState extends State<Poker> {
       }
 
       //Gives a short pause between bot decisions
-      await Future.delayed(const Duration(seconds: 1), () {
-        print("1 second passing for bot $i");
-      });
+      setState(() {});
+      await Future.delayed(const Duration(seconds: 1), () {});
     }
-
-    setState(() {
-      currentBet = 0;
-    });
   }
 
   @override
@@ -339,9 +348,9 @@ class _PokerState extends State<Poker> {
           if (gameHasStarted)
             SizedBox(
               width: double.infinity,
-              height: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.9,
               child: Align(
-                alignment: const Alignment(0, 0.8),
+                alignment: const Alignment(0, 0.7),
                 child:
                     Column(mainAxisAlignment: MainAxisAlignment.end, children: [
                   Row(
@@ -420,61 +429,109 @@ class _PokerState extends State<Poker> {
                           });
                         },
                         child: const Text('Start Game')),
-                  if (gameHasStarted)
-                    //Call
-                    ElevatedButton(
-                      onPressed: () {
-                        botMoves(round);
-                        nextMove();
-                      },
-                      child: const Text('Call'),
-                    ),
-                  if (gameHasStarted)
-                    //Fold
-                    Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: ElevatedButton(
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    if (gameHasStarted)
+
+                      //Call
+                      ElevatedButton(
                         onPressed: () {
-                          botMoves(round);
-                          nextMove();
+                          money[0] -= currentBet;
+                          pot += currentBet;
+                          if (callCounter < opponents) {
+                            botMoves(round);
+                          } else {
+                            nextMove();
+                          }
                         },
-                        child: const Text('Fold'),
+                        child: const Text('Call'),
                       ),
-                    ),
-                  if (gameHasStarted)
-                    //Raise
-                    Row(mainAxisSize: MainAxisSize.min, children: [
+                    if (gameHasStarted)
+
+                      //Fold
                       Padding(
-                        padding: const EdgeInsets.only(right: 4),
+                        padding: const EdgeInsets.all(4),
                         child: ElevatedButton(
                           onPressed: () {
-                            pot += int.parse(raiseAmount.text);
-                            money[0] -= int.parse(raiseAmount.text);
-                            currentBet += int.parse(raiseAmount.text);
-                            botMoves(round);
-                            nextMove();
+                            //Handle game over
+
+                            if (callCounter < opponents) {
+                              botMoves(round);
+                            } else {
+                              nextMove();
+                            }
                           },
-                          child: const Text('Raise'),
+                          child: const Text('Fold'),
                         ),
                       ),
-                      SizedBox(
-                        height: 45,
-                        width: 80,
-                        child: TextField(
-                            controller: raiseAmount,
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder(), filled: true),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ]),
-                      ),
-                    ]),
+                    if (gameHasStarted)
+                      //Raise
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              pot += int.parse(raiseAmount.text);
+                              money[0] -= int.parse(raiseAmount.text);
+                              currentBet += int.parse(raiseAmount.text);
+                              setState(() {});
+                              if (callCounter < opponents) {
+                                botMoves(round);
+                              } else {
+                                nextMove();
+                              }
+                            },
+                            child: const Text('Raise'),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 45,
+                          width: 80,
+                          child: TextField(
+                              controller: raiseAmount,
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(), filled: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ]),
+                        ),
+                      ]),
+                  ]),
                   if (gameHasStarted)
-                    Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Text(pot.toString(),
-                            style: const TextStyle(fontSize: 20)))
+                    Column(
+                      children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Padding(
+                                  padding: EdgeInsets.all(6),
+                                  child: Text("Pot: ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
+                              Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: Text(pot.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold))),
+                            ]),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Padding(
+                                  padding: EdgeInsets.all(6),
+                                  child: Text("Current Bet: ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
+                              Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: Text(currentBet.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold))),
+                            ])
+                      ],
+                    )
                 ],
               ),
             ),
