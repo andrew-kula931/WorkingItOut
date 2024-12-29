@@ -71,6 +71,7 @@ class _PokerState extends State<Poker> {
   }
 
   Future<void> botMoves(int round) async {
+    callCounter = 0;
     for (int i = 1; i <= opponents; i++) {
       if (folded.contains(i)) {
         callCounter++;
@@ -94,11 +95,13 @@ class _PokerState extends State<Poker> {
         case Decision.FOLD:
           print('bot $i folded');
           folded.add(i);
+          callCounter++;
           break;
         case Decision.CALL:
           print('bot $i called');
           money[i] -= currentBet;
           pot += currentBet;
+          callCounter++;
           break;
         case Decision.RAISE:
           print('bot $i raised ${botDecision.bet}');
@@ -106,12 +109,19 @@ class _PokerState extends State<Poker> {
           currentBet += botDecision.bet;
           money[i] -= totalMoney;
           pot += totalMoney;
+          callCounter = 0;
           break;
       }
 
       //Gives a short pause between bot decisions
       setState(() {});
       await Future.delayed(const Duration(seconds: 1), () {});
+    }
+
+    //Resets counter and applies next move
+    if (callCounter == opponents) {
+      callCounter == 0;
+      nextMove();
     }
   }
 
@@ -464,6 +474,7 @@ class _PokerState extends State<Poker> {
                         ),
                       ),
                     if (gameHasStarted)
+
                       //Raise
                       Row(mainAxisSize: MainAxisSize.min, children: [
                         Padding(
@@ -473,6 +484,7 @@ class _PokerState extends State<Poker> {
                               pot += int.parse(raiseAmount.text);
                               money[0] -= int.parse(raiseAmount.text);
                               currentBet += int.parse(raiseAmount.text);
+                              callCounter = 0;
                               setState(() {});
                               if (callCounter < opponents) {
                                 botMoves(round);
