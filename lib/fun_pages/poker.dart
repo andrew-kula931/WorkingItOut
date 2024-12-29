@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:playing_cards/playing_cards.dart';
 import '../fun_components/empty_stack.dart';
 import '../fun_components/hand.dart';
+import 'poker_algorithm.dart';
+import 'dart:async';
 
-class Poker extends StatefulWidget{
+class Poker extends StatefulWidget {
   const Poker({super.key});
 
   @override
@@ -12,7 +14,6 @@ class Poker extends StatefulWidget{
 }
 
 class _PokerState extends State<Poker> {
-
   //Card variables
   List<PlayingCard> deck = standardFiftyTwoCardDeck();
   PlayingCard? flopOne;
@@ -20,11 +21,13 @@ class _PokerState extends State<Poker> {
   PlayingCard? flopThree;
   PlayingCard? turn;
   PlayingCard? river;
+  //Player is at index 0
   List<List<PlayingCard>> competitorHands = [[], [], [], [], [], [], []];
 
   //Player's total is at index 0
-  List<int> money = [500, 500, 500, 500, 500, 500, 500]; 
-  int pot = 0;
+  List<double> money = [500, 500, 500, 500, 500, 500, 500];
+  double pot = 0;
+  double currentBet = 0;
 
   //Configuration variables
   int opponents = 2;
@@ -33,6 +36,7 @@ class _PokerState extends State<Poker> {
   //Game variables
   bool gameHasStarted = false;
   TextEditingController raiseAmount = TextEditingController();
+  int round = 0;
 
   void startingGame() {
     deck = standardFiftyTwoCardDeck();
@@ -43,7 +47,6 @@ class _PokerState extends State<Poker> {
     }
 
     gameHasStarted = true;
-    
   }
 
   void nextMove() {
@@ -53,22 +56,65 @@ class _PokerState extends State<Poker> {
       flopThree = deck.removeLast();
     } else if (turn == null) {
       turn = deck.removeLast();
-    } else { 
+    } else {
       river ??= deck.removeLast();
     }
+    round++;
     setState(() {});
+  }
+
+  Future<void> botMoves(int round) async {
+    for (int i = 1; i <= opponents; i++) {
+      Result botDecision = makeDecision(
+          competitorHands[i][0],
+          competitorHands[i][1],
+          flopOne,
+          flopTwo,
+          flopThree,
+          turn,
+          river,
+          money[i],
+          currentBet,
+          pot,
+          round);
+
+      switch (botDecision.decision) {
+        case Decision.FOLD:
+          //Handle the bot folding
+          print("Bot folded");
+          break;
+        case Decision.CALL:
+          money[i] -= currentBet;
+          pot += currentBet;
+          break;
+        case Decision.RAISE:
+          double totalMoney = currentBet + botDecision.bet;
+          currentBet += botDecision.bet;
+          money[i] -= totalMoney;
+          pot += totalMoney;
+          break;
+      }
+
+      //Gives a short pause between bot decisions
+      await Future.delayed(const Duration(seconds: 1), () {
+        print("1 second passing for bot $i");
+      });
+    }
+
+    setState(() {
+      currentBet = 0;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text('Poker'),
+        appBar: AppBar(
+          title: const Center(
+            child: Text('Poker'),
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
+        body: Stack(children: [
           Center(
             child: CustomPaint(
               size: const Size(1500, 1500),
@@ -76,102 +122,104 @@ class _PokerState extends State<Poker> {
             ),
           ),
           Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                //Dealer Pile
-                Padding(
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              //Dealer Pile
+              Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
                   child: SizedBox(
                     height: 140,
                     width: 100,
-                    child: PlayingCardView(card: PlayingCard(Suit.spades, CardValue.ace), showBack: true, elevation: 3.0),
-                  )
-                ),
+                    child: PlayingCardView(
+                        card: PlayingCard(Suit.spades, CardValue.ace),
+                        showBack: true,
+                        elevation: 3.0),
+                  )),
 
-                //FlopOne
-                Padding(
+              //FlopOne
+              Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: (flopOne != null) ? SizedBox(
-                    height: 140,
-                    width: 100,
-                    child: PlayingCardView(card: flopOne!, showBack: false, elevation: 3.0),
-                  ) :
-                  const EmptyStack()
-                ),
+                  child: (flopOne != null)
+                      ? SizedBox(
+                          height: 140,
+                          width: 100,
+                          child: PlayingCardView(
+                              card: flopOne!, showBack: false, elevation: 3.0),
+                        )
+                      : const EmptyStack()),
 
-                //FlopTwo
-                Padding(
+              //FlopTwo
+              Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: (flopTwo != null) ? SizedBox(
-                    height: 140,
-                    width: 100,
-                    child: PlayingCardView(card: flopTwo!, showBack: false, elevation: 3.0),
-                  ) :
-                  const EmptyStack()
-                ),
+                  child: (flopTwo != null)
+                      ? SizedBox(
+                          height: 140,
+                          width: 100,
+                          child: PlayingCardView(
+                              card: flopTwo!, showBack: false, elevation: 3.0),
+                        )
+                      : const EmptyStack()),
 
-                //FlopThree
-                Padding(
+              //FlopThree
+              Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: (flopThree != null) ? SizedBox(
-                    height: 140,
-                    width: 100,
-                    child: PlayingCardView(card: flopThree!, showBack: false, elevation: 3.0),
-                  ) :
-                  const EmptyStack()
-                ),
+                  child: (flopThree != null)
+                      ? SizedBox(
+                          height: 140,
+                          width: 100,
+                          child: PlayingCardView(
+                              card: flopThree!,
+                              showBack: false,
+                              elevation: 3.0),
+                        )
+                      : const EmptyStack()),
 
-                //Turn
-                Padding(
+              //Turn
+              Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: (turn != null) ? SizedBox(
-                    height: 140,
-                    width: 100,
-                    child: PlayingCardView(card: turn!, showBack: false, elevation: 3.0),
-                  ) :
-                  const EmptyStack()
-                ),
+                  child: (turn != null)
+                      ? SizedBox(
+                          height: 140,
+                          width: 100,
+                          child: PlayingCardView(
+                              card: turn!, showBack: false, elevation: 3.0),
+                        )
+                      : const EmptyStack()),
 
-                //River
-                Padding(
+              //River
+              Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: (river != null) ? SizedBox(
-                    height: 140,
-                    width: 100,
-                    child: PlayingCardView(card: river!, showBack: false, elevation: 3.0),
-                  ) :
-                  const EmptyStack()
-                ),
-              ]
-            ),
+                  child: (river != null)
+                      ? SizedBox(
+                          height: 140,
+                          width: 100,
+                          child: PlayingCardView(
+                              card: river!, showBack: false, elevation: 3.0),
+                        )
+                      : const EmptyStack()),
+            ]),
           ),
-          
+
           //Hands
           //CPU 1
           SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Align(
-              alignment: const Alignment(-0.92, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 140,
-                    width: 140,
-                    child: (gameHasStarted) ? 
-                      const Hand() :
-                      const Icon(Icons.person, size: 100)
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Text(money[1].toString())
-                  ),
-                ],
-              )
-            ),
+                alignment: const Alignment(-0.92, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        height: 140,
+                        width: 140,
+                        child: (gameHasStarted)
+                            ? const Hand()
+                            : const Icon(Icons.person, size: 100)),
+                    Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Text(money[1].toString())),
+                  ],
+                )),
           ),
 
           //CPU 2
@@ -180,24 +228,21 @@ class _PokerState extends State<Poker> {
               width: double.infinity,
               height: double.infinity,
               child: Align(
-                alignment: const Alignment(0.92, 0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 140,
-                      width: 140,
-                      child: (gameHasStarted) ? 
-                        const Hand() :
-                        const Icon(Icons.person, size: 100)
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(money[2].toString())
-                    ),
-                  ],
-                )
-              ),
+                  alignment: const Alignment(0.92, 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          height: 140,
+                          width: 140,
+                          child: (gameHasStarted)
+                              ? const Hand()
+                              : const Icon(Icons.person, size: 100)),
+                      Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(money[2].toString())),
+                    ],
+                  )),
             ),
 
           //CPU 3
@@ -206,23 +251,20 @@ class _PokerState extends State<Poker> {
               width: double.infinity,
               height: double.infinity,
               child: Align(
-                alignment: const Alignment(-0.85, -0.82),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 140,
-                      width: 140,
-                      child: (gameHasStarted) ? 
-                        const Hand() :
-                        const Icon(Icons.person, size: 100)
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(money[3].toString())
-                    ),
-                  ],
-                )
-              ),
+                  alignment: const Alignment(-0.85, -0.82),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          height: 140,
+                          width: 140,
+                          child: (gameHasStarted)
+                              ? const Hand()
+                              : const Icon(Icons.person, size: 100)),
+                      Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(money[3].toString())),
+                    ],
+                  )),
             ),
 
           //CPU 4
@@ -231,24 +273,20 @@ class _PokerState extends State<Poker> {
               width: double.infinity,
               height: double.infinity,
               child: Align(
-                alignment: const Alignment(0.85, -0.82),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 140,
-                      width: 140,
-                      child: (gameHasStarted) ? 
-                        const Hand() :
-                        const Icon(Icons.person, size: 100)
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(money[4].toString())
-                    ),
-                  ],
-                )
-
-              ),
+                  alignment: const Alignment(0.85, -0.82),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          height: 140,
+                          width: 140,
+                          child: (gameHasStarted)
+                              ? const Hand()
+                              : const Icon(Icons.person, size: 100)),
+                      Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(money[4].toString())),
+                    ],
+                  )),
             ),
 
           //CPU 5
@@ -257,24 +295,21 @@ class _PokerState extends State<Poker> {
               width: double.infinity,
               height: double.infinity,
               child: Align(
-                alignment: const Alignment(-0.85, 0.82),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      height: 140,
-                      width: 140,
-                      child: (gameHasStarted) ? 
-                        const Hand() :
-                        const Icon(Icons.person, size: 100)
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(money[5].toString())
-                    ),
-                  ],
-                )
-              ),
+                  alignment: const Alignment(-0.85, 0.82),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                          height: 140,
+                          width: 140,
+                          child: (gameHasStarted)
+                              ? const Hand()
+                              : const Icon(Icons.person, size: 100)),
+                      Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(money[5].toString())),
+                    ],
+                  )),
             ),
 
           //CPU 6
@@ -283,24 +318,21 @@ class _PokerState extends State<Poker> {
               width: double.infinity,
               height: double.infinity,
               child: Align(
-                alignment: const Alignment(0.85, 0.82),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      height: 140,
-                      width: 140,
-                      child: (gameHasStarted) ? 
-                        const Hand() :
-                        const Icon(Icons.person, size: 100)
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Text(money[6].toString())
-                    ),
-                  ],
-                )
-              ),
+                  alignment: const Alignment(0.85, 0.82),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                          height: 140,
+                          width: 140,
+                          child: (gameHasStarted)
+                              ? const Hand()
+                              : const Icon(Icons.person, size: 100)),
+                      Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(money[6].toString())),
+                    ],
+                  )),
             ),
 
           //Player hand
@@ -310,150 +342,144 @@ class _PokerState extends State<Poker> {
               height: double.infinity,
               child: Align(
                 alignment: const Alignment(0, 0.8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 2),
-                          child: SizedBox(
+                child:
+                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 2),
+                        child: SizedBox(
                             height: 140,
                             width: 100,
-                            child: PlayingCardView(card: competitorHands[0][0], showBack: false, elevation: 3.0)
-                          ),
-                        ),
-                        SizedBox(
+                            child: PlayingCardView(
+                                card: competitorHands[0][0],
+                                showBack: false,
+                                elevation: 3.0)),
+                      ),
+                      SizedBox(
                           height: 140,
                           width: 100,
-                          child: PlayingCardView(card: competitorHands[0][1], showBack: false, elevation: 3.0)
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.attach_money),
-                        Text(money[0].toString(), style: const TextStyle(fontWeight: FontWeight.w700))
-                      ],
-                    )
-                  ]
-                ), 
+                          child: PlayingCardView(
+                              card: competitorHands[0][1],
+                              showBack: false,
+                              elevation: 3.0)),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.attach_money),
+                      Text(money[0].toString(),
+                          style: const TextStyle(fontWeight: FontWeight.w700))
+                    ],
+                  )
+                ]),
               ),
             ),
 
           //Game configuration settings
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 10),
-                        width: 50,
-                        height: 30,
-                        color: Colors.white,
-                        child: DropdownButton<int>(
-                          value: opponents,
-                          items: opponentAmount.map((int amount) {
-                            return DropdownMenuItem<int>(
-                              value: amount,
-                              child: Text(amount.toString()),
-                            );
-                          }).toList(),
-                          onChanged: (int? newAmount) {
-                            setState(() {
-                              if (newAmount != null) {
-                                opponents = newAmount;
-                              }
-                            });
-                          },
-                          underline: const SizedBox(),
-                        ),
+          Row(children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      width: 50,
+                      height: 30,
+                      color: Colors.white,
+                      child: DropdownButton<int>(
+                        value: opponents,
+                        items: opponentAmount.map((int amount) {
+                          return DropdownMenuItem<int>(
+                            value: amount,
+                            child: Text(amount.toString()),
+                          );
+                        }).toList(),
+                        onChanged: (int? newAmount) {
+                          setState(() {
+                            if (newAmount != null) {
+                              opponents = newAmount;
+                            }
+                          });
+                        },
+                        underline: const SizedBox(),
                       ),
                     ),
-                    
-                    if (!gameHasStarted)
-                      //Starting Game
-                      ElevatedButton(
+                  ),
+                  if (!gameHasStarted)
+                    //Starting Game
+                    ElevatedButton(
                         onPressed: () {
                           setState(() {
+                            round = 0;
                             startingGame();
                           });
                         },
-                        child: const Text('Start Game')
-                      ),
-
-                    if (gameHasStarted)
-                      //Call
-                      ElevatedButton(
+                        child: const Text('Start Game')),
+                  if (gameHasStarted)
+                    //Call
+                    ElevatedButton(
+                      onPressed: () {
+                        botMoves(round);
+                        nextMove();
+                      },
+                      child: const Text('Call'),
+                    ),
+                  if (gameHasStarted)
+                    //Fold
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: ElevatedButton(
                         onPressed: () {
+                          botMoves(round);
                           nextMove();
                         },
-                        child: const Text('Call'),
+                        child: const Text('Fold'),
                       ),
-
-                    if (gameHasStarted)
-                      //Fold
+                    ),
+                  if (gameHasStarted)
+                    //Raise
+                    Row(mainAxisSize: MainAxisSize.min, children: [
                       Padding(
-                        padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.only(right: 4),
                         child: ElevatedButton(
                           onPressed: () {
+                            pot += int.parse(raiseAmount.text);
+                            money[0] -= int.parse(raiseAmount.text);
+                            currentBet += int.parse(raiseAmount.text);
+                            botMoves(round);
                             nextMove();
                           },
-                          child: const Text('Fold'),
+                          child: const Text('Raise'),
                         ),
                       ),
-
-                    if (gameHasStarted)
-                      //Raise
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(padding: const EdgeInsets.only(right: 4),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              pot += int.parse(raiseAmount.text);
-                              money[0] -= int.parse(raiseAmount.text);
-                              nextMove();
-                            },
-                            child: const Text('Raise'),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 45,
-                            width: 80,
-                            child: TextField(
-                              controller: raiseAmount,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                filled: true),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ]
-                            ),
-                          ),
-                        ]
+                      SizedBox(
+                        height: 45,
+                        width: 80,
+                        child: TextField(
+                            controller: raiseAmount,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(), filled: true),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ]),
                       ),
-
-                    if (gameHasStarted)
-                      Padding(
+                    ]),
+                  if (gameHasStarted)
+                    Padding(
                         padding: const EdgeInsets.all(6),
-                        child: Text(pot.toString(), style: const TextStyle(fontSize: 20))  
-                      )
-                  ],
-                ),
+                        child: Text(pot.toString(),
+                            style: const TextStyle(fontSize: 20)))
+                ],
               ),
-            ]
-          ),
-        ]
-      )
-    );
+            ),
+          ]),
+        ]));
   }
 }
 
