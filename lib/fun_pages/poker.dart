@@ -23,9 +23,11 @@ class _PokerState extends State<Poker> {
   PlayingCard? river;
   //Player is at index 0
   List<List<PlayingCard>> competitorHands = [[], [], [], [], [], [], []];
+  List<bool> playersTurn = [false, false, false, false, false, false, false];
 
   //Player's total is at index 0
   List<double> money = [500, 500, 500, 500, 500, 500, 500];
+  List<double> lastBet = [0, 0, 0, 0, 0, 0, 0];
   double pot = 0;
   double currentBet = 0;
 
@@ -57,6 +59,26 @@ class _PokerState extends State<Poker> {
 
   void nextMove() {
     currentBet = 0;
+    callCounter = 0;
+
+    //Checks to see if the game is over
+    if (round == 3) {
+      roundEnd(0); //This always lets the player win
+      return;
+    }
+
+    //Checks to see if all the bots have folded
+    if (folded.length == opponents) {
+      roundEnd(0);
+      return;
+    }
+
+    //Resets the lastBet list
+    for (int b = 0; b < lastBet.length; b++) {
+      lastBet[b] = 0;
+    }
+
+    //Adds the next card(s) to the table
     if (flopOne == null) {
       flopOne = deck.removeLast();
       flopTwo = deck.removeLast();
@@ -72,7 +94,19 @@ class _PokerState extends State<Poker> {
 
   Future<void> botMoves(int round) async {
     callCounter = 0;
+    playersTurn[0] = false;
     for (int i = 1; i <= opponents; i++) {
+      playersTurn[i - 1] = false;
+      playersTurn[i] = true;
+      setState(() {});
+
+      //Early out if it gets back to the last person that has bet
+      if (currentBet != 0 && lastBet[i] == currentBet) {
+        nextMove();
+        return;
+      }
+
+      //Early out for folded bot
       if (folded.contains(i)) {
         callCounter++;
         continue;
@@ -109,7 +143,10 @@ class _PokerState extends State<Poker> {
           currentBet += botDecision.bet;
           money[i] -= totalMoney;
           pot += totalMoney;
+
+          //Prepares for another round of betting
           callCounter = 0;
+          lastBet[i] = botDecision.bet;
           break;
       }
 
@@ -118,11 +155,32 @@ class _PokerState extends State<Poker> {
       await Future.delayed(const Duration(seconds: 1), () {});
     }
 
+    //Sets the stage for the player to interact
+    for (int p = 0; p < playersTurn.length; p++) {
+      playersTurn[p] = false;
+    }
+    playersTurn[0] = true;
+
     //Resets counter and applies next move
     if (callCounter == opponents) {
       callCounter == 0;
       nextMove();
     }
+  }
+
+  void roundEnd(int winner) {
+    //Add money accordingly
+    money[winner] += pot;
+    pot = 0;
+    currentBet = 0;
+
+    //Resets the board
+    for (int h = 0; h < competitorHands.length; h++) {
+      competitorHands[h] = [];
+    }
+
+    startingGame();
+    setState(() {});
   }
 
   @override
@@ -236,7 +294,9 @@ class _PokerState extends State<Poker> {
                             : const Icon(Icons.person, size: 100)),
                     Padding(
                         padding: const EdgeInsets.all(5),
-                        child: Text(money[1].toString())),
+                        child: (playersTurn[1])
+                            ? Text('> ${money[1].toString()}')
+                            : Text(money[1].toString())),
                   ],
                 )),
           ),
@@ -259,7 +319,9 @@ class _PokerState extends State<Poker> {
                               : const Icon(Icons.person, size: 100)),
                       Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Text(money[2].toString())),
+                          child: (playersTurn[2])
+                              ? Text('> ${money[2].toString()}')
+                              : Text(money[2].toString())),
                     ],
                   )),
             ),
@@ -281,7 +343,9 @@ class _PokerState extends State<Poker> {
                               : const Icon(Icons.person, size: 100)),
                       Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Text(money[3].toString())),
+                          child: (playersTurn[3])
+                              ? Text('> ${money[3].toString()}')
+                              : Text(money[3].toString())),
                     ],
                   )),
             ),
@@ -303,7 +367,9 @@ class _PokerState extends State<Poker> {
                               : const Icon(Icons.person, size: 100)),
                       Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Text(money[4].toString())),
+                          child: (playersTurn[4])
+                              ? Text('> ${money[4].toString()}')
+                              : Text(money[4].toString())),
                     ],
                   )),
             ),
@@ -326,7 +392,9 @@ class _PokerState extends State<Poker> {
                               : const Icon(Icons.person, size: 100)),
                       Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Text(money[5].toString())),
+                          child: (playersTurn[5])
+                              ? Text('> ${money[5].toString()}')
+                              : Text(money[5].toString())),
                     ],
                   )),
             ),
@@ -349,7 +417,9 @@ class _PokerState extends State<Poker> {
                               : const Icon(Icons.person, size: 100)),
                       Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Text(money[6].toString())),
+                          child: (playersTurn[6])
+                              ? Text('> ${money[6].toString()}')
+                              : Text(money[6].toString())),
                     ],
                   )),
             ),
@@ -388,6 +458,7 @@ class _PokerState extends State<Poker> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (playersTurn[0]) const Text('> '),
                       const Icon(Icons.attach_money),
                       Text(money[0].toString(),
                           style: const TextStyle(fontWeight: FontWeight.w700))
