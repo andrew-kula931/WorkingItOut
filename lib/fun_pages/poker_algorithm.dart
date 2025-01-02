@@ -181,8 +181,15 @@ int findHandStrength(
     PlayingCard? flop3,
     PlayingCard? turn,
     PlayingCard? river) {
-  //Build lists of available cards
-  List<PlayingCard> availableCards = [handOne, handTwo];
+  //This function gets run twice once without the hand so this first conditional checks that
+  late List<PlayingCard> availableCards;
+  if (handOne.suit != Suit.joker) {
+    availableCards = [handOne, handTwo];
+  } else {
+    availableCards = [];
+  }
+
+  //Adds the rest of the cards to the list
   if (flop1 != null) {
     availableCards.add(flop1);
   }
@@ -197,6 +204,11 @@ int findHandStrength(
   }
   if (river != null) {
     availableCards.add(river);
+  }
+
+  //Null check for a case when there are no cards to check
+  if (availableCards.isEmpty) {
+    return 0;
   }
 
   //Check possible hand score starting from highest possible score
@@ -291,13 +303,21 @@ Result makeDecision(
   //Round 4 -> River
   int handStrength =
       findHandStrength(handOne, handTwo, flop1, flop2, flop3, turn, river);
+  int tableStrength = findHandStrength(
+      PlayingCard(Suit.joker, CardValue.joker_1),
+      PlayingCard(Suit.joker, CardValue.joker_2),
+      flop1,
+      flop2,
+      flop3,
+      turn,
+      river);
   late double adjustedHand;
   switch (round) {
     case 1:
-      adjustedHand = handStrength * 4.5;
+      adjustedHand = handStrength * 3.5;
       break;
     case 2:
-      adjustedHand = handStrength * 2;
+      adjustedHand = handStrength * 1.8;
       break;
     case 3:
       adjustedHand = handStrength * 1.2;
@@ -306,6 +326,7 @@ Result makeDecision(
       adjustedHand = handStrength.toDouble();
       break;
   }
+  adjustedHand -= tableStrength.toDouble();
 
   //Checks their standing and how much is in the pot
   //This will affect how much bot bets

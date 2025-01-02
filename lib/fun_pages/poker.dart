@@ -474,32 +474,33 @@ class _PokerState extends State<Poker> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Container(
-                      padding: const EdgeInsets.only(left: 10),
-                      width: 50,
-                      height: 30,
-                      color: Colors.white,
-                      child: DropdownButton<int>(
-                        value: opponents,
-                        items: opponentAmount.map((int amount) {
-                          return DropdownMenuItem<int>(
-                            value: amount,
-                            child: Text(amount.toString()),
-                          );
-                        }).toList(),
-                        onChanged: (int? newAmount) {
-                          setState(() {
-                            if (newAmount != null) {
-                              opponents = newAmount;
-                            }
-                          });
-                        },
-                        underline: const SizedBox(),
+                  if (!gameHasStarted)
+                    Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 10),
+                        width: 50,
+                        height: 30,
+                        color: Colors.white,
+                        child: DropdownButton<int>(
+                          value: opponents,
+                          items: opponentAmount.map((int amount) {
+                            return DropdownMenuItem<int>(
+                              value: amount,
+                              child: Text(amount.toString()),
+                            );
+                          }).toList(),
+                          onChanged: (int? newAmount) {
+                            setState(() {
+                              if (newAmount != null) {
+                                opponents = newAmount;
+                              }
+                            });
+                          },
+                          underline: const SizedBox(),
+                        ),
                       ),
                     ),
-                  ),
                   if (!gameHasStarted)
                     //Starting Game
                     ElevatedButton(
