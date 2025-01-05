@@ -1,0 +1,2 @@
+#ignore the chess.dart file so the board string doesn't get messed up
+lib/fun_pages/chess.dart
