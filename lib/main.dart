@@ -11,9 +11,9 @@ import 'fun_pages/spinner.dart';
 import 'data/spinner_db.dart';
 import 'fun_pages/solitare.dart';
 import 'fun_pages/poker.dart';
+import 'fun_pages/chess.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   //final appDocumentsDir = await pathProvider.getApplicationDocumentsDirectory();
   // await Hive.initFlutter(appDocumentsDir.path);
@@ -78,6 +78,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
   var recentGameColor = Colors.lightGreen;
   var solitareListColor = Colors.lightGreen;
   var pokerListColor = Colors.lightGreen;
+  var chessListColor = Colors.lightGreen;
 
   //Dropdown menu variables
   bool gamingMenu = false;
@@ -93,8 +94,11 @@ class _WorkoutAppState extends State<WorkoutApp> {
   @override
   void initState() {
     super.initState();
-    scheduledWorkouts = Hive.box('WorkoutSchedule').values
-      .where((x) => (x.day.isAfter(yesterday) && x.day.isBefore(twoDaysLater))).toList();
+    scheduledWorkouts = Hive.box('WorkoutSchedule')
+        .values
+        .where(
+            (x) => (x.day.isAfter(yesterday) && x.day.isBefore(twoDaysLater)))
+        .toList();
   }
 
   @override
@@ -128,75 +132,79 @@ class _WorkoutAppState extends State<WorkoutApp> {
   }
 
   void _closeWorkoutBoxes() async {
-    if(Hive.isBoxOpen('Workout')) {
+    if (Hive.isBoxOpen('Workout')) {
       Box workoutBox = Hive.box('Workout');
       await workoutBox.close();
     }
-    if(Hive.isBoxOpen('WorkoutDoc')) {
+    if (Hive.isBoxOpen('WorkoutDoc')) {
       Box workoutDoc = Hive.box('WorkoutDoc');
       await workoutDoc.close();
     }
-    if(Hive.isBoxOpen('WorkoutNotes')) {
+    if (Hive.isBoxOpen('WorkoutNotes')) {
       Box workoutNotes = Hive.box('WorkoutNotes');
       await workoutNotes.close();
     }
 
-    scheduledWorkouts = Hive.box('WorkoutSchedule').values
-      .where((x) => (x.day.isAfter(yesterday) && x.day.isBefore(twoDaysLater))).toList();
+    scheduledWorkouts = Hive.box('WorkoutSchedule')
+        .values
+        .where(
+            (x) => (x.day.isAfter(yesterday) && x.day.isBefore(twoDaysLater)))
+        .toList();
 
-    if(Hive.isBoxOpen('WorkoutSchedule')) {
+    if (Hive.isBoxOpen('WorkoutSchedule')) {
       Box workoutSchedule = Hive.box('WorkoutSchedule');
       await workoutSchedule.close();
     }
-    
+
     setState(() {});
   }
 
   void _closeGameBoxes() async {
-    if(Hive.isBoxOpen('Games')) {
+    if (Hive.isBoxOpen('Games')) {
       Box games = Hive.box('Games');
       await games.close();
     }
-    if(Hive.isBoxOpen('RecentGames')) {
+    if (Hive.isBoxOpen('RecentGames')) {
       Box recents = Hive.box('RecentGames');
       await recents.close();
     }
-    if(Hive.isBoxOpen('GameGoals')) {
+    if (Hive.isBoxOpen('GameGoals')) {
       Box goals = Hive.box('GameGoals');
       await goals.close();
     }
   }
 
-
 /*
     Widget Tree Starter here
 */
-
-
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text('Working It Out'), 
-      centerTitle: true,
-      titleTextStyle: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 2, 46, 14),) ),
+      appBar: AppBar(
+          title: const Text('Working It Out'),
+          centerTitle: true,
+          titleTextStyle: const TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 2, 46, 14),
+          )),
       body: Form(
         key: _formKey,
 
         //Main page is the navagation row stacked on the main column
         child: Stack(
           children: [
-
             //Main page
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 //Top Info
                 Container(
                   margin: const EdgeInsets.only(left: 40, top: 60),
-                  child: const Text('This Week:', style: TextStyle(fontSize: 30)),
+                  child:
+                      const Text('This Week:', style: TextStyle(fontSize: 30)),
                 ),
 
                 //The Event bar
@@ -207,7 +215,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(left:4, right: 4),
+                        padding: EdgeInsets.only(left: 4, right: 4),
                         child: Text('Events', style: TextStyle(fontSize: 20)),
                       ),
                     ],
@@ -222,7 +230,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(left:4, right: 4),
+                        padding: EdgeInsets.only(left: 4, right: 4),
                         child: Text('Goals', style: TextStyle(fontSize: 20)),
                       ),
                     ],
@@ -237,28 +245,27 @@ class _WorkoutAppState extends State<WorkoutApp> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(left:4, right: 4),
+                        padding: EdgeInsets.only(left: 4, right: 4),
                         child: Text('Workouts', style: TextStyle(fontSize: 20)),
                       ),
                       SizedBox(
                         height: 60,
                         width: MediaQuery.of(context).size.width * .7,
                         child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: scheduledWorkouts.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              color: Colors.green,
-                              width: 80,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(scheduledWorkouts[index].name)
-                                ],
-                              )
-                            );
-                          }
-                        ),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: scheduledWorkouts.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                  color: Colors.green,
+                                  width: 80,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(scheduledWorkouts[index].name)
+                                    ],
+                                  ));
+                            }),
                       )
                     ],
                   ),
@@ -317,14 +324,14 @@ class _WorkoutAppState extends State<WorkoutApp> {
                       ),
                     ),
 
-
                     //Delete this because it is unnecessary
                     Padding(
                       padding: EdgeInsets.only(left: 40, right: 40),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Major Change to the algorithm, this will crash everything'),
+                          Text(
+                              'Major Change to the algorithm, this will crash everything'),
                         ],
                       ),
                     ),
@@ -339,124 +346,148 @@ class _WorkoutAppState extends State<WorkoutApp> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                
                 //The page options at the top of the main page
-                Row (
+                Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                  Column(
-                    children: [
-                      GestureDetector(
-                        onTap: _gamingMenu,
-                        onLongPress: () async {
-                          if (!Hive.isBoxOpen('Games')) {
-                            await Hive.openBox('Games');                   
-                          }
-                          if (!Hive.isBoxOpen('RecentGames')) {
-                            await Hive.openBox('RecentGames');
-                            if (Hive.box('RecentGames').isEmpty) {
-                              RecentGames data = RecentGames(recents: []);
-                              await Hive.box('RecentGames').add(data);
+                    Column(
+                      children: [
+                        GestureDetector(
+                          onTap: _gamingMenu,
+                          onLongPress: () async {
+                            if (!Hive.isBoxOpen('Games')) {
+                              await Hive.openBox('Games');
                             }
-                          }
-                          if (!Hive.isBoxOpen('GameGoals')) {
-                            await Hive.openBox('GameGoals');
-                          }
-                          // ignore: use_build_context_synchronously
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()))
-                          .then((value) {
-                            _closeGameBoxes();
-                          });
-                        },
-                        child:Container(
-                          width: screenWidth * .25,
-                          height: 50,
-                          decoration: const BoxDecoration(color: Colors.white),
-                          child: const Center(
-                            child: Text('Gaming'),
+                            if (!Hive.isBoxOpen('RecentGames')) {
+                              await Hive.openBox('RecentGames');
+                              if (Hive.box('RecentGames').isEmpty) {
+                                RecentGames data = RecentGames(recents: []);
+                                await Hive.box('RecentGames').add(data);
+                              }
+                            }
+                            if (!Hive.isBoxOpen('GameGoals')) {
+                              await Hive.openBox('GameGoals');
+                            }
+                            // ignore: use_build_context_synchronously
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const GamingHome())).then((value) {
+                              _closeGameBoxes();
+                            });
+                          },
+                          child: Container(
+                            width: screenWidth * .25,
+                            height: 50,
+                            decoration:
+                                const BoxDecoration(color: Colors.white),
+                            child: const Center(
+                              child: Text('Gaming'),
+                            ),
                           ),
                         ),
-                      ),
-                      if (gamingMenu)
-                        SizedBox(
-                          width: screenWidth * .25,
-                          child: Column (
-                            children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  if (!Hive.isBoxOpen('Games')) {
-                                    await Hive.openBox('Games');                   
-                                  }
-                                  if (!Hive.isBoxOpen('RecentGames')) {
-                                    await Hive.openBox('RecentGames');
-                                    if (Hive.box('RecentGames').isEmpty) {
-                                      RecentGames data = RecentGames(recents: []);
-                                      await Hive.box('RecentGames').add(data);
-                                    }
-                                  }
-                                  if (!Hive.isBoxOpen('GameGoals')) {
-                                    await Hive.openBox('GameGoals');
-                                  }
+                        if (gamingMenu)
+                          SizedBox(
+                            width: screenWidth * .25,
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                    onTap: () async {
+                                      if (!Hive.isBoxOpen('Games')) {
+                                        await Hive.openBox('Games');
+                                      }
+                                      if (!Hive.isBoxOpen('RecentGames')) {
+                                        await Hive.openBox('RecentGames');
+                                        if (Hive.box('RecentGames').isEmpty) {
+                                          RecentGames data =
+                                              RecentGames(recents: []);
+                                          await Hive.box('RecentGames')
+                                              .add(data);
+                                        }
+                                      }
+                                      if (!Hive.isBoxOpen('GameGoals')) {
+                                        await Hive.openBox('GameGoals');
+                                      }
 
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const GamingHome()))
-                                  .then((value) {
-                                    _closeGameBoxes();
-                                  });
-                                },
-                                child: MouseRegion(
-                                  onEnter: (event) => setState(() => gameListColor = Colors.green),
-                                  onExit: (event) => setState(() => gameListColor = Colors.lightGreen),
-                                  child: Container (
-                                    decoration: BoxDecoration(color: gameListColor),
-                                    width: MediaQuery.of(context).size.width * .25,
-                                    height: 40,
-                                    child: const Center(
-                                      child: Text("Games List"),
-                                    )
-                                  )
-                                )
-                              ),
-                              
-                              GestureDetector(
-                                onTap: () async {
-                                  if (!Hive.isBoxOpen('Games')) {
-                                    await Hive.openBox('Games');                   
-                                  }
-                                  if (!Hive.isBoxOpen('RecentGames')) {
-                                    await Hive.openBox('RecentGames');
-                                  }
-                                  if (!Hive.isBoxOpen('GameGoals')) {
-                                    await Hive.openBox('GameGoals');
-                                  }
-
-                                  var recentGameBox = Hive.box('RecentGames').getAt(0);
-                                  if (recentGameBox != null && recentGameBox.recents.isNotEmpty) {
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  
-                                      GameProfile(index: Hive.box('RecentGames').getAt(0).recents[0])))
-                                      .then((value) {
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const GamingHome()))
+                                          .then((value) {
                                         _closeGameBoxes();
                                       });
-                                  }
-                                },
-                                child: MouseRegion(
-                                  onEnter: (event) => setState(() => recentGameColor = Colors.green),
-                                  onExit: (event) => setState(() => recentGameColor = Colors.lightGreen),
-                                  child: Container (
-                                    decoration: BoxDecoration(color: recentGameColor),
-                                    width: MediaQuery.of(context).size.width * .25,
-                                    height: 40,
-                                    child: const Center(
-                                      child: Text("Most Recent"),
-                                    )
-                                  )
-                                )
-                              ),
-                            ],
+                                    },
+                                    child: MouseRegion(
+                                        onEnter: (event) => setState(
+                                            () => gameListColor = Colors.green),
+                                        onExit: (event) => setState(() =>
+                                            gameListColor = Colors.lightGreen),
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                                color: gameListColor),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .25,
+                                            height: 40,
+                                            child: const Center(
+                                              child: Text("Games List"),
+                                            )))),
+                                GestureDetector(
+                                    onTap: () async {
+                                      if (!Hive.isBoxOpen('Games')) {
+                                        await Hive.openBox('Games');
+                                      }
+                                      if (!Hive.isBoxOpen('RecentGames')) {
+                                        await Hive.openBox('RecentGames');
+                                      }
+                                      if (!Hive.isBoxOpen('GameGoals')) {
+                                        await Hive.openBox('GameGoals');
+                                      }
+
+                                      var recentGameBox =
+                                          Hive.box('RecentGames').getAt(0);
+                                      if (recentGameBox != null &&
+                                          recentGameBox.recents.isNotEmpty) {
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    GameProfile(
+                                                        index: Hive.box(
+                                                                'RecentGames')
+                                                            .getAt(0)
+                                                            .recents[0]))).then(
+                                            (value) {
+                                          _closeGameBoxes();
+                                        });
+                                      }
+                                    },
+                                    child: MouseRegion(
+                                        onEnter: (event) => setState(() =>
+                                            recentGameColor = Colors.green),
+                                        onExit: (event) => setState(() =>
+                                            recentGameColor =
+                                                Colors.lightGreen),
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                                color: recentGameColor),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .25,
+                                            height: 40,
+                                            child: const Center(
+                                              child: Text("Most Recent"),
+                                            )))),
+                              ],
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     Column(
@@ -464,28 +495,32 @@ class _WorkoutAppState extends State<WorkoutApp> {
                         GestureDetector(
                           onTap: _workoutMenu,
                           onLongPress: () async {
-                            if(!Hive.isBoxOpen('Workout')) {
+                            if (!Hive.isBoxOpen('Workout')) {
                               await Hive.openBox('Workout');
                             }
-                            if(!Hive.isBoxOpen('WorkoutDoc')) {
+                            if (!Hive.isBoxOpen('WorkoutDoc')) {
                               await Hive.openBox('WorkoutDoc');
                             }
-                            if(!Hive.isBoxOpen('WorkoutSchedule')) {
+                            if (!Hive.isBoxOpen('WorkoutSchedule')) {
                               await Hive.openBox('WorkoutSchedule');
                             }
-                            if(!Hive.isBoxOpen('WorkoutNotes')) {
+                            if (!Hive.isBoxOpen('WorkoutNotes')) {
                               await Hive.openBox('WorkoutNotes');
                             }
                             // ignore: use_build_context_synchronously
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkoutPage()))
-                            .then((value) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const WorkoutPage())).then((value) {
                               _closeWorkoutBoxes();
                             });
                           },
                           child: Container(
                             width: screenWidth * .25,
                             height: 50,
-                            decoration: const BoxDecoration(color: Colors.white),
+                            decoration:
+                                const BoxDecoration(color: Colors.white),
                             child: const Center(
                               child: Text('Workout'),
                             ),
@@ -493,91 +528,119 @@ class _WorkoutAppState extends State<WorkoutApp> {
                         ),
                         if (workoutMenu)
                           Container(
-                            width: screenWidth * .25,
-                            decoration: const BoxDecoration(color: Colors.lightGreen),
-                            child: Column (
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    if(!Hive.isBoxOpen('Workout')) {
-                                      await Hive.openBox('Workout');
-                                    }
-                                    if(!Hive.isBoxOpen('WorkoutDoc')) {
-                                      await Hive.openBox('WorkoutDoc');
-                                    }
-                                    if(!Hive.isBoxOpen('WorkoutSchedule')) {
-                                      await Hive.openBox('WorkoutSchedule');
-                                    }
-                                    if(!Hive.isBoxOpen('WorkoutNotes')) {
-                                      await Hive.openBox('WorkoutNotes');
-                                    }
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkoutPage()))
-                                    .then((value) {
-                                      _closeWorkoutBoxes();
-                                    });
-                                  },
-                                  child: MouseRegion(
-                                    onEnter: (event) => setState(() => updateWorkoutColor = Colors.green),
-                                    onExit: (event) => setState(() => updateWorkoutColor = Colors.lightGreen),
-                                    child: Container(
-                                      height: 40,
-                                      decoration: BoxDecoration(color: updateWorkoutColor),
-                                      child: const Center(child: Text("Update Workout Info"),) 
+                              width: screenWidth * .25,
+                              decoration:
+                                  const BoxDecoration(color: Colors.lightGreen),
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (!Hive.isBoxOpen('Workout')) {
+                                        await Hive.openBox('Workout');
+                                      }
+                                      if (!Hive.isBoxOpen('WorkoutDoc')) {
+                                        await Hive.openBox('WorkoutDoc');
+                                      }
+                                      if (!Hive.isBoxOpen('WorkoutSchedule')) {
+                                        await Hive.openBox('WorkoutSchedule');
+                                      }
+                                      if (!Hive.isBoxOpen('WorkoutNotes')) {
+                                        await Hive.openBox('WorkoutNotes');
+                                      }
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const WorkoutPage()))
+                                          .then((value) {
+                                        _closeWorkoutBoxes();
+                                      });
+                                    },
+                                    child: MouseRegion(
+                                      onEnter: (event) => setState(() =>
+                                          updateWorkoutColor = Colors.green),
+                                      onExit: (event) => setState(() =>
+                                          updateWorkoutColor =
+                                              Colors.lightGreen),
+                                      child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                              color: updateWorkoutColor),
+                                          child: const Center(
+                                            child: Text("Update Workout Info"),
+                                          )),
                                     ),
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    if(!Hive.isBoxOpen('Workout')) {
-                                      await Hive.openBox('Workout');
-                                    }
-                                    if(!Hive.isBoxOpen('WorkoutDoc')) {
-                                      await Hive.openBox('WorkoutDoc');
-                                    }
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkoutArchive()))
-                                    .then((value) {
-                                      _closeWorkoutBoxes();
-                                    });
-                                  },
-                                  child: MouseRegion(
-                                    onEnter: (event) => setState(() => viewWorkoutHistoryColor = Colors.green),
-                                    onExit: (event) => setState(() => viewWorkoutHistoryColor = Colors.lightGreen),
-                                    child: Container(
-                                      height: 40,
-                                      decoration: BoxDecoration(color: viewWorkoutHistoryColor),
-                                      child: const Center(child: Text("View History"),) 
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (!Hive.isBoxOpen('Workout')) {
+                                        await Hive.openBox('Workout');
+                                      }
+                                      if (!Hive.isBoxOpen('WorkoutDoc')) {
+                                        await Hive.openBox('WorkoutDoc');
+                                      }
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const WorkoutArchive()))
+                                          .then((value) {
+                                        _closeWorkoutBoxes();
+                                      });
+                                    },
+                                    child: MouseRegion(
+                                      onEnter: (event) => setState(() =>
+                                          viewWorkoutHistoryColor =
+                                              Colors.green),
+                                      onExit: (event) => setState(() =>
+                                          viewWorkoutHistoryColor =
+                                              Colors.lightGreen),
+                                      child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                              color: viewWorkoutHistoryColor),
+                                          child: const Center(
+                                            child: Text("View History"),
+                                          )),
                                     ),
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    if(!Hive.isBoxOpen('Workout')) {
-                                      await Hive.openBox('Workout');
-                                    }
-                                    if(!Hive.isBoxOpen('WorkoutSchedule')) {
-                                      await Hive.openBox('WorkoutSchedule');
-                                    }
-                                    //ignore: use_build_context_synchronously
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const RoutinePlanner()))
-                                    .then((value) {
-                                      _closeWorkoutBoxes();
-                                    });
-                                  },
-                                  child: MouseRegion(
-                                    onEnter: (event) => setState(() => routinePlannerColor = Colors.green),
-                                    onExit: (event) => setState(() => routinePlannerColor = Colors.lightGreen),
-                                    child: Container(
-                                      height: 40,
-                                      decoration: BoxDecoration(color: routinePlannerColor),
-                                      child: const Center(child: Text("Routine Planner"),) 
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (!Hive.isBoxOpen('Workout')) {
+                                        await Hive.openBox('Workout');
+                                      }
+                                      if (!Hive.isBoxOpen('WorkoutSchedule')) {
+                                        await Hive.openBox('WorkoutSchedule');
+                                      }
+                                      //ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const RoutinePlanner()))
+                                          .then((value) {
+                                        _closeWorkoutBoxes();
+                                      });
+                                    },
+                                    child: MouseRegion(
+                                      onEnter: (event) => setState(() =>
+                                          routinePlannerColor = Colors.green),
+                                      onExit: (event) => setState(() =>
+                                          routinePlannerColor =
+                                              Colors.lightGreen),
+                                      child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                              color: routinePlannerColor),
+                                          child: const Center(
+                                            child: Text("Routine Planner"),
+                                          )),
                                     ),
                                   ),
-                                ),
-                              ],
-                            )
-                          ),
+                                ],
+                              )),
                       ],
                     ),
                     Column(
@@ -587,7 +650,8 @@ class _WorkoutAppState extends State<WorkoutApp> {
                           child: Container(
                             width: screenWidth * .25,
                             height: 50,
-                            decoration: const BoxDecoration(color: Colors.white),
+                            decoration:
+                                const BoxDecoration(color: Colors.white),
                             child: const Center(
                               child: Text('Organization'),
                             ),
@@ -595,15 +659,15 @@ class _WorkoutAppState extends State<WorkoutApp> {
                         ),
                         if (orgMenu)
                           Container(
-                            width: screenWidth * .25,
-                            decoration: const BoxDecoration(color: Colors.green),
-                            child: const Column (
-                              children: [
-                                Text("Edit/Add Events"),
-                                Text('Calendar'),
-                              ],
-                            )
-                          ),
+                              width: screenWidth * .25,
+                              decoration:
+                                  const BoxDecoration(color: Colors.green),
+                              child: const Column(
+                                children: [
+                                  Text("Edit/Add Events"),
+                                  Text('Calendar'),
+                                ],
+                              )),
                       ],
                     ),
                     Column(
@@ -613,7 +677,8 @@ class _WorkoutAppState extends State<WorkoutApp> {
                           child: Container(
                             width: screenWidth * .25,
                             height: 50,
-                            decoration: const BoxDecoration(color: Colors.white),
+                            decoration:
+                                const BoxDecoration(color: Colors.white),
                             child: const Center(
                               child: Text('Fun'),
                             ),
@@ -621,75 +686,132 @@ class _WorkoutAppState extends State<WorkoutApp> {
                         ),
                         if (funMenu)
                           Container(
-                            width: screenWidth * .25,
-                            decoration: const BoxDecoration(color: Colors.green),
-                            child: Column (
-                              children: [
-                                //Solitare Menu
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Solitare()));
-                                  },
-                                  child: MouseRegion(
-                                    onEnter: (event) => setState(() => solitareListColor = Colors.green),
-                                    onExit: (event) => setState(() => solitareListColor = Colors.lightGreen),
-                                    child: Container (
-                                      decoration: BoxDecoration(color: solitareListColor),
-                                      width: MediaQuery.of(context).size.width * .25,
-                                      height: 40,
-                                      child: const Center(
-                                        child: Text("Solitare"),
-                                      )
-                                    )
-                                  )
-                                ),
+                              width: screenWidth * .25,
+                              decoration:
+                                  const BoxDecoration(color: Colors.green),
+                              child: Column(
+                                children: [
+                                  //Solitare Menu
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Solitare()));
+                                      },
+                                      child: MouseRegion(
+                                          onEnter: (event) => setState(() =>
+                                              solitareListColor = Colors.green),
+                                          onExit: (event) => setState(() =>
+                                              solitareListColor =
+                                                  Colors.lightGreen),
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: solitareListColor),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .25,
+                                              height: 40,
+                                              child: const Center(
+                                                child: Text("Solitare"),
+                                              )))),
 
-                                //Poker Menu
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Poker()));
-                                  },
-                                  child: MouseRegion(
-                                    onEnter: (event) => setState(() => pokerListColor = Colors.green),
-                                    onExit: (event) => setState(() => pokerListColor = Colors.lightGreen),
-                                    child: Container (
-                                      decoration: BoxDecoration(color: pokerListColor),
-                                      width: MediaQuery.of(context).size.width * .25,
-                                      height: 40,
-                                      child: const Center(
-                                        child: Text("Poker"),
-                                      )
-                                    )
-                                  )
-                                ),
+                                  //Poker Menu
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Poker()));
+                                      },
+                                      child: MouseRegion(
+                                          onEnter: (event) => setState(() =>
+                                              pokerListColor = Colors.green),
+                                          onExit: (event) => setState(() =>
+                                              pokerListColor =
+                                                  Colors.lightGreen),
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: pokerListColor),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .25,
+                                              height: 40,
+                                              child: const Center(
+                                                child: Text("Poker"),
+                                              )))),
 
-                                //Spinner Menu
-                                GestureDetector(
-                                  onTap: () async {
-                                    await Hive.openBox('SpinnerData');
-                                    if (Hive.box('SpinnerData').isEmpty) {
-                                      SpinnerData data = SpinnerData(items: ['Nothing yet', 'Still nothing']);
-                                      await Hive.box('SpinnerData').add(data);
-                                    }
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SpinningPage()));
-                                  },
-                                  child: MouseRegion(
-                                    onEnter: (event) => setState(() => gameListColor = Colors.green),
-                                    onExit: (event) => setState(() => gameListColor = Colors.lightGreen),
-                                    child: Container (
-                                      decoration: BoxDecoration(color: gameListColor),
-                                      width: MediaQuery.of(context).size.width * .25,
-                                      height: 40,
-                                      child: const Center(
-                                        child: Text("Random Wheel"),
-                                      )
-                                    )
-                                  )
-                                ),
-                              ],
-                            )
-                          ),
+                                  //Spinner Menu
+                                  GestureDetector(
+                                      onTap: () async {
+                                        await Hive.openBox('SpinnerData');
+                                        if (Hive.box('SpinnerData').isEmpty) {
+                                          SpinnerData data = SpinnerData(
+                                              items: [
+                                                'Nothing yet',
+                                                'Still nothing'
+                                              ]);
+                                          await Hive.box('SpinnerData')
+                                              .add(data);
+                                        }
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const SpinningPage()));
+                                      },
+                                      child: MouseRegion(
+                                          onEnter: (event) => setState(() =>
+                                              gameListColor = Colors.green),
+                                          onExit: (event) => setState(() =>
+                                              gameListColor =
+                                                  Colors.lightGreen),
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: gameListColor),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .25,
+                                              height: 40,
+                                              child: const Center(
+                                                child: Text("Random Wheel"),
+                                              )))),
+
+                                  //Chess Menu
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Chess()));
+                                      },
+                                      child: MouseRegion(
+                                        onEnter: (event) => setState(() =>
+                                            chessListColor = Colors.green),
+                                        onExit: (event) => setState(() =>
+                                            chessListColor = Colors.lightGreen),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: chessListColor),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .25,
+                                          height: 40,
+                                          child: const Center(
+                                            child: Text("Chess"),
+                                          ),
+                                        ),
+                                      ))
+                                ],
+                              )),
                       ],
                     ),
                   ],
