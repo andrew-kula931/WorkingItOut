@@ -43,6 +43,7 @@ dependencies:
   playing_cards: ^0.4.1+11
   squares: ^1.2.1
   bishop: ^1.4.4
+  square_bishop: ^0.3.0
 
 dev_dependencies:
   flutter_test:
