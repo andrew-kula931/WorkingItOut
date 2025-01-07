@@ -1,9 +1,10 @@
 import 'dart:math';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:squares/squares.dart';
 import 'package:bishop/bishop.dart' as bishop;
 import 'package:square_bishop/square_bishop.dart';
-import 'chess/chess_move_reader.dart';
+import 'chess_move_reader.dart';
 
 class Chess extends StatefulWidget {
   const Chess({super.key});
@@ -54,6 +55,8 @@ class _ChessState extends State<Chess> {
     bool result = game.makeSquaresMove(move);
 
     if (result) {
+      final file = File('lib/fun_pages/chess/moves_test.txt');
+      await file.writeAsString('${move.from.toString()}${move.to.toString()}');
       setState(() => state = game.squaresState(player));
     }
 

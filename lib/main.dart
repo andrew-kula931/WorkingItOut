@@ -11,7 +11,7 @@ import 'fun_pages/spinner.dart';
 import 'data/spinner_db.dart';
 import 'fun_pages/solitare.dart';
 import 'fun_pages/poker.dart';
-import 'fun_pages/chess.dart';
+import 'fun_pages/chess/chess.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -30,9 +30,11 @@ class _AddGameState extends State<AddGame> {
         final img.Image? image = img.decodeImage(file);
 
         if (image != null) {
-          final img.Image resizedImage = img.copyResize(image, width: 150, height: 150);
+          final img.Image resizedImage =
+              img.copyResize(image, width: 150, height: 150);
 
-          final Uint8List resizedImageBytes = Uint8List.fromList(img.encodePng(resizedImage));
+          final Uint8List resizedImageBytes =
+              Uint8List.fromList(img.encodePng(resizedImage));
           setState(() {
             _imageBytes = resizedImageBytes;
           });
@@ -43,7 +45,7 @@ class _AddGameState extends State<AddGame> {
     return null;
   }
 
-    Future<Uint8List?> _pickFileWindows() async {
+  Future<Uint8List?> _pickFileWindows() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.image);
 
     if (result != null) {
@@ -54,8 +56,10 @@ class _AddGameState extends State<AddGame> {
         final img.Image? image = img.decodeImage(file);
 
         if (image != null) {
-          final img.Image resizedImage = img.copyResize(image, width: 150, height: 150);
-          final Uint8List resizedImageBytes = Uint8List.fromList(img.encodePng(resizedImage));
+          final img.Image resizedImage =
+              img.copyResize(image, width: 150, height: 150);
+          final Uint8List resizedImageBytes =
+              Uint8List.fromList(img.encodePng(resizedImage));
           setState(() {
             _imageBytes = resizedImageBytes;
           });
@@ -73,86 +77,86 @@ class _AddGameState extends State<AddGame> {
 
   @override
   Widget build(BuildContext context) {
-    return Container (
-      decoration: const BoxDecoration(color:  Color.fromARGB(255, 3, 29, 85),),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color.fromARGB(255, 3, 29, 85),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 200,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20, top: 10),
-                      child: TextField(
-                        controller: _nameController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
-                        ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      try {
-                        if (Platform.isWindows) {
-                          _pickFileWindows();
-                        }
-                      } catch (e) {
-                        _pickFileEdge();
-                      }
-                      
-                    },
-
-                    //Addable image slot here
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: _imageBytes == null ? Container(
-                        width: 180,
-                        height: 180,
-                        color: const Color.fromARGB(255, 196, 193, 193),
-                        child: const Center( 
-                          child: Text('Add Image')
-                        ) 
-                      ) : Image.memory(_imageBytes!),
-                    )
-                  )
-                ],
-              ),
               SizedBox(
-                width: 500,
-                child: TextField(
-                  controller: _descriptionController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder()),
-                  maxLines: 10,
-                  minLines: 3,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(223, 3, 48, 145),
+                width: 200,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 10),
+                  child: TextField(
+                    controller: _nameController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                        labelText: 'Name', border: OutlineInputBorder()),
                   ),
-                  onPressed: () async {
-                    var box = Hive.box('Games');
-                    var gameData = GamesDb(
-                      name: _nameController.text,
-                      description: _descriptionController.text,
-                      imageBytes: _imageBytes,
-                    );
-                    await box.add(gameData);
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Add Game'),
                 ),
               ),
+              GestureDetector(
+                  onTap: () {
+                    try {
+                      if (Platform.isWindows) {
+                        _pickFileWindows();
+                      }
+                    } catch (e) {
+                      _pickFileEdge();
+                    }
+                  },
+
+                  //Addable image slot here
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: _imageBytes == null
+                        ? Container(
+                            width: 180,
+                            height: 180,
+                            color: const Color.fromARGB(255, 196, 193, 193),
+                            child: const Center(child: Text('Add Image')))
+                        : Image.memory(_imageBytes!),
+                  ))
             ],
           ),
-        
+          SizedBox(
+            width: 500,
+            child: TextField(
+              controller: _descriptionController,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                  labelText: 'Description', border: OutlineInputBorder()),
+              maxLines: 10,
+              minLines: 3,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(223, 3, 48, 145),
+              ),
+              onPressed: () async {
+                var box = Hive.box('Games');
+                var gameData = GamesDb(
+                  name: _nameController.text,
+                  description: _descriptionController.text,
+                  imageBytes: _imageBytes,
+                );
+                await box.add(gameData);
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
+              },
+              child: const Text('Add Game'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
