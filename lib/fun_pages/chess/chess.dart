@@ -39,6 +39,7 @@ class _ChessState extends State<Chess> {
   //Reads the next move from a file
   void _readMove() async {
     String? line = await reader.nextMove();
+    print(line);
 
     if (line == null) {
       return;
@@ -53,18 +54,33 @@ class _ChessState extends State<Chess> {
   //Allows for a manual game
   void _onMove(Move move) async {
     bool result = game.makeSquaresMove(move);
+    final file = File('lib/fun_pages/chess/moves_test.txt');
 
+    //Handles the user move and writes the move to a file
     if (result) {
-      final file = File('lib/fun_pages/chess/moves_test.txt');
-      await file.writeAsString('${move.from.toString()}${move.to.toString()}');
+      await file.writeAsString(
+          '${convertMove(move.from.toString(), move.to.toString())}\n',
+          mode: FileMode.append);
       setState(() => state = game.squaresState(player));
     }
 
+    //Handles the bot move and writes the move to a file
     if (state.state == PlayState.theirTurn && !aiThinking) {
       setState(() => aiThinking = true);
+
       await Future.delayed(
-          Duration(milliseconds: Random().nextInt(4750) + 250));
-      game.makeRandomMove();
+          Duration(milliseconds: Random().nextInt(1000) + 250));
+
+      //Generate bot move
+      bishop.Move botMove = game.makeRandomMove();
+      int botMoveFrom = botAdjustment(botMove.from);
+      int botMoveTo = botAdjustment(botMove.to);
+
+      //Write to fiel
+      await file.writeAsString(
+          '${convertMove(botMoveFrom.toString(), botMoveTo.toString())}\n',
+          mode: FileMode.append);
+
       setState(() {
         aiThinking = false;
         state = game.squaresState(player);
