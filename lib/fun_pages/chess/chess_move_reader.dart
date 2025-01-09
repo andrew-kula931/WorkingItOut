@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:bishop/bishop.dart';
 
 class LineReader {
   late StreamIterator<String> _iterator;
