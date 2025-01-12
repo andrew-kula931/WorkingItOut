@@ -5,6 +5,7 @@ import 'package:squares/squares.dart';
 import 'package:bishop/bishop.dart' as bishop;
 import 'package:square_bishop/square_bishop.dart';
 import 'chess_move_reader.dart';
+import 'chat_move_retreiver.dart';
 
 class Chess extends StatefulWidget {
   const Chess({super.key});
@@ -39,7 +40,6 @@ class _ChessState extends State<Chess> {
   //Reads the next move from a file
   void _readMove() async {
     String? line = await reader.nextMove();
-    print(line);
 
     if (line == null) {
       return;
@@ -48,6 +48,7 @@ class _ChessState extends State<Chess> {
     bishop.Move m = game.getMove(line)!;
     game.makeMove(m);
     setState(() => state = game.squaresState(player));
+    print('${game.fen} $line');
     return;
   }
 
@@ -76,7 +77,7 @@ class _ChessState extends State<Chess> {
       int botMoveFrom = botAdjustment(botMove.from);
       int botMoveTo = botAdjustment(botMove.to);
 
-      //Write to fiel
+      //Write to file
       await file.writeAsString(
           '${convertMove(botMoveFrom.toString(), botMoveTo.toString())}\n',
           mode: FileMode.append);
@@ -130,6 +131,15 @@ class _ChessState extends State<Chess> {
               onPressed: _flipBoard,
               icon: const Icon(Icons.rotate_left),
             ),
+            IconButton(
+                onPressed: () async {
+                  const prompt = 'Say hello to my program in German';
+                  final geminiService = GeminiMove();
+                  final response = await geminiService.sendToGemini(prompt);
+
+                  print("Gemini Response: $response");
+                },
+                icon: const Icon(Icons.chat))
           ],
         ),
       ),

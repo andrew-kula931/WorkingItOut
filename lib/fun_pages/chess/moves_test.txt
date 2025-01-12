@@ -20,3 +20,13 @@ b2b4
 c5b4
 a2a4
 c8b7
+d2d4
+b8a6
+e2e4
+b7b6
+d2d4
+b7b5
+c2c3
+g8h6
+d2d3
+h7h5

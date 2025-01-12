@@ -44,6 +44,9 @@ dependencies:
   squares: ^1.2.1
   bishop: ^1.4.4
   square_bishop: ^0.3.0
+  http: ^1.0.0
+  googleapis_auth: ^1.4.0
+  google_generative_ai: ^0.4.6
 
 dev_dependencies:
   flutter_test:
