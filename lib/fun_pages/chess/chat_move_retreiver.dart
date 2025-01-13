@@ -1,5 +1,5 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'chess_env.dart';
+import 'chess_env.dart' if (dart.library.html) 'package:http/http.dart';
 
 class GeminiMove {
   Future<String> sendToGemini(String prompt) async {
