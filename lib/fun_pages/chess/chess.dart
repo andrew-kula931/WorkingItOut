@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:squares/squares.dart';
 import 'package:bishop/bishop.dart' as bishop;
 import 'package:square_bishop/square_bishop.dart';
@@ -58,7 +59,7 @@ class _ChessState extends State<Chess> {
     final file = File('lib/fun_pages/chess/moves_test.txt');
 
     //Handles the user move and writes the move to a file
-    if (result) {
+    if (result && !kIsWeb) {
       await file.writeAsString(
           '${convertMove(move.from.toString(), move.to.toString())}\n',
           mode: FileMode.append);
@@ -78,9 +79,11 @@ class _ChessState extends State<Chess> {
       int botMoveTo = botAdjustment(botMove.to);
 
       //Write to file
-      await file.writeAsString(
-          '${convertMove(botMoveFrom.toString(), botMoveTo.toString())}\n',
-          mode: FileMode.append);
+      if (!kIsWeb) {
+        await file.writeAsString(
+            '${convertMove(botMoveFrom.toString(), botMoveTo.toString())}\n',
+            mode: FileMode.append);
+      }
 
       setState(() {
         aiThinking = false;
