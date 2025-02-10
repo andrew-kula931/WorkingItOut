@@ -71,14 +71,16 @@ class _WorkoutAppState extends State<WorkoutApp> {
   int duration = 0;
 
   //Color variables
-  var updateWorkoutColor = Colors.lightGreen;
-  var viewWorkoutHistoryColor = Colors.lightGreen;
-  var routinePlannerColor = Colors.lightGreen;
-  var gameListColor = Colors.lightGreen;
-  var recentGameColor = Colors.lightGreen;
-  var solitareListColor = Colors.lightGreen;
-  var pokerListColor = Colors.lightGreen;
-  var chessListColor = Colors.lightGreen;
+  Map<String, Color> colorMap = {
+    'updateWorkoutColor': Colors.lightGreen,
+    'viewWorkoutHistoryColor': Colors.lightGreen,
+    'routinePlannerColor': Colors.lightGreen,
+    'gameListColor': Colors.lightGreen,
+    'recentGameColor': Colors.lightGreen,
+    'solitareListColor': Colors.lightGreen,
+    'pokerListColor': Colors.lightGreen,
+    'chessListColor': Colors.lightGreen
+  };
 
   //Dropdown menu variables
   bool gamingMenu = false;
@@ -422,13 +424,16 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       });
                                     },
                                     child: MouseRegion(
-                                        onEnter: (event) => setState(
-                                            () => gameListColor = Colors.green),
+                                        onEnter: (event) => setState(() =>
+                                            colorMap['gameListColor'] =
+                                                Colors.green),
                                         onExit: (event) => setState(() =>
-                                            gameListColor = Colors.lightGreen),
+                                            colorMap['gameListColor'] =
+                                                Colors.lightGreen),
                                         child: Container(
                                             decoration: BoxDecoration(
-                                                color: gameListColor),
+                                                color:
+                                                    colorMap['gameListColor']),
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
@@ -470,13 +475,15 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                     },
                                     child: MouseRegion(
                                         onEnter: (event) => setState(() =>
-                                            recentGameColor = Colors.green),
+                                            colorMap['recentGameColor'] =
+                                                Colors.green),
                                         onExit: (event) => setState(() =>
-                                            recentGameColor =
+                                            colorMap['recentGameColor'] =
                                                 Colors.lightGreen),
                                         child: Container(
                                             decoration: BoxDecoration(
-                                                color: recentGameColor),
+                                                color: colorMap[
+                                                    'recentGameColor']),
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
@@ -559,16 +566,19 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                     },
                                     child: MouseRegion(
                                       onEnter: (event) => setState(() =>
-                                          updateWorkoutColor = Colors.green),
+                                          colorMap['updateWorkoutColor'] =
+                                              Colors.green),
                                       onExit: (event) => setState(() =>
-                                          updateWorkoutColor =
+                                          colorMap['updateWorkoutColor'] =
                                               Colors.lightGreen),
                                       child: Container(
                                           height: 40,
                                           decoration: BoxDecoration(
-                                              color: updateWorkoutColor),
+                                              color: colorMap[
+                                                  'updateWorkoutColor']),
                                           child: const Center(
-                                            child: Text("Update Workout Info"),
+                                            child: Text("Update Workout Info",
+                                                textAlign: TextAlign.center),
                                           )),
                                     ),
                                   ),
@@ -592,15 +602,16 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                     },
                                     child: MouseRegion(
                                       onEnter: (event) => setState(() =>
-                                          viewWorkoutHistoryColor =
+                                          colorMap['viewWorkoutHistoryColor'] =
                                               Colors.green),
                                       onExit: (event) => setState(() =>
-                                          viewWorkoutHistoryColor =
+                                          colorMap['viewWorkoutHistoryColor'] =
                                               Colors.lightGreen),
                                       child: Container(
                                           height: 40,
                                           decoration: BoxDecoration(
-                                              color: viewWorkoutHistoryColor),
+                                              color: colorMap[
+                                                  'viewWorkoutHistoryColor']),
                                           child: const Center(
                                             child: Text("View History"),
                                           )),
@@ -626,14 +637,16 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                     },
                                     child: MouseRegion(
                                       onEnter: (event) => setState(() =>
-                                          routinePlannerColor = Colors.green),
+                                          colorMap['routinePlannerColor'] =
+                                              Colors.green),
                                       onExit: (event) => setState(() =>
-                                          routinePlannerColor =
+                                          colorMap['routinePlannerColor'] =
                                               Colors.lightGreen),
                                       child: Container(
                                           height: 40,
                                           decoration: BoxDecoration(
-                                              color: routinePlannerColor),
+                                              color: colorMap[
+                                                  'routinePlannerColor']),
                                           child: const Center(
                                             child: Text("Routine Planner"),
                                           )),
@@ -702,13 +715,15 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       },
                                       child: MouseRegion(
                                           onEnter: (event) => setState(() =>
-                                              solitareListColor = Colors.green),
+                                              colorMap['solitareListColor'] =
+                                                  Colors.green),
                                           onExit: (event) => setState(() =>
-                                              solitareListColor =
+                                              colorMap['solitareListColor'] =
                                                   Colors.lightGreen),
                                           child: Container(
                                               decoration: BoxDecoration(
-                                                  color: solitareListColor),
+                                                  color: colorMap[
+                                                      'solitareListColor']),
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -729,13 +744,15 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       },
                                       child: MouseRegion(
                                           onEnter: (event) => setState(() =>
-                                              pokerListColor = Colors.green),
+                                              colorMap['pokerListColor'] =
+                                                  Colors.green),
                                           onExit: (event) => setState(() =>
-                                              pokerListColor =
+                                              colorMap['pokerListColor'] =
                                                   Colors.lightGreen),
                                           child: Container(
                                               decoration: BoxDecoration(
-                                                  color: pokerListColor),
+                                                  color: colorMap[
+                                                      'pokerListColor']),
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -767,13 +784,15 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       },
                                       child: MouseRegion(
                                           onEnter: (event) => setState(() =>
-                                              gameListColor = Colors.green),
+                                              colorMap['gameListColor'] =
+                                                  Colors.green),
                                           onExit: (event) => setState(() =>
-                                              gameListColor =
+                                              colorMap['gameListColor'] =
                                                   Colors.lightGreen),
                                           child: Container(
                                               decoration: BoxDecoration(
-                                                  color: gameListColor),
+                                                  color: colorMap[
+                                                      'gameListColor']),
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -794,12 +813,15 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       },
                                       child: MouseRegion(
                                         onEnter: (event) => setState(() =>
-                                            chessListColor = Colors.green),
+                                            colorMap['chessListColor'] =
+                                                Colors.green),
                                         onExit: (event) => setState(() =>
-                                            chessListColor = Colors.lightGreen),
+                                            colorMap['chessListColor'] =
+                                                Colors.lightGreen),
                                         child: Container(
                                           decoration: BoxDecoration(
-                                              color: chessListColor),
+                                              color:
+                                                  colorMap['chessListColor']),
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
