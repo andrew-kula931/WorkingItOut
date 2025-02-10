@@ -1,16 +1,12 @@
-# workout_app
+# WorkingItOut
 
-A new Flutter project.
+This small scale sandbox application using flutter as the framework. As a WIP it has a few bugs to iron out but is still functional.
 
-## Getting Started
+## Current features
+1. Workout planner and tracker
+2. Gaming planner (To-Do List)
+3. Solitare
+4. Chess
+5. Poker (In Progress)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Application is intended for desktop viewing and operation but can work on any platform via the web.

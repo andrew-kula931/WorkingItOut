@@ -13,15 +13,29 @@ class AddWorkout extends StatefulWidget {
 class _AddWorkoutState extends State<AddWorkout> {
   // ignore: non_constant_identifier_names
   final List<String> MUSCLE_GROUPS = [
-    'Upper Chest', 'Lower Chest', 'Latissimus Dorsi', 'Rhomboid',
-    'Trapezius', 'Teres', 'Erector Spinae', 'Biceps', 'Triceps',
-    'Deltoids', 'Obliques', 'Abs', 'Hamstrings', 'Gluteals', 'Quadriceps',
+    'Upper Chest',
+    'Lower Chest',
+    'Latissimus Dorsi',
+    'Rhomboid',
+    'Trapezius',
+    'Teres',
+    'Erector Spinae',
+    'Biceps',
+    'Triceps',
+    'Deltoids',
+    'Obliques',
+    'Abs',
+    'Hamstrings',
+    'Gluteals',
+    'Quadriceps',
     'Calves'
   ];
   String? dropDownValue;
   bool groupList = false;
 
   //Storing inputted values
+  final FocusNode _nameFocus = FocusNode();
+  final FocusNode _workoutsFocus = FocusNode();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _workoutsController = TextEditingController();
   List<String> dropDownValues = [];
@@ -54,8 +68,10 @@ class _AddWorkoutState extends State<AddWorkout> {
                     width: 350,
                     height: 50,
                     child: TextField(
+                      focusNode: _nameFocus,
                       controller: _nameController,
-                      decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+                      decoration: const InputDecoration(
+                          labelText: 'Name', border: OutlineInputBorder()),
                     ),
                   ),
                 ],
@@ -72,8 +88,11 @@ class _AddWorkoutState extends State<AddWorkout> {
                   SizedBox(
                     width: 350,
                     child: TextField(
+                      focusNode: _workoutsFocus,
                       controller: _workoutsController,
-                      decoration: const InputDecoration(labelText: 'Excercises', border: OutlineInputBorder()),
+                      decoration: const InputDecoration(
+                          labelText: 'Excercises',
+                          border: OutlineInputBorder()),
                       maxLines: 5,
                       minLines: 1,
                     ),
@@ -100,7 +119,7 @@ class _AddWorkoutState extends State<AddWorkout> {
                 ],
               ),
             ),
-            if(groupList)
+            if (groupList)
               Padding(
                 padding: const EdgeInsets.all(4),
                 child: SizedBox(
@@ -125,7 +144,7 @@ class _AddWorkoutState extends State<AddWorkout> {
                   ),
                 ),
               ),
-            
+
             //Save button
             ElevatedButton(
               onPressed: () async {
