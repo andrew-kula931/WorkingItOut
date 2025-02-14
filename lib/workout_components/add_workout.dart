@@ -41,6 +41,13 @@ class _AddWorkoutState extends State<AddWorkout> {
   List<String> dropDownValues = [];
 
   @override
+  void dispose() {
+    _nameFocus.dispose();
+    _workoutsFocus.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
       child: Container(

@@ -63,59 +63,7 @@ class _WorkoutPage extends State<WorkoutPage> {
     for (var i = 0; i < workoutDoc.length; i++) {
       var obj = workoutDoc[i];
       for (var area in obj.workAreas) {
-        switch (area) {
-          case 'Upper Chest':
-            muscleGroups['UpperChest'] = muscleGroups['UpperChest']! + 1;
-            break;
-          case 'Lower Chest':
-            muscleGroups['LowerChest'] = muscleGroups['LowerChest']! + 1;
-            break;
-          case 'Latissimus Dorsi':
-            muscleGroups['LatissimusDorsi'] =
-                muscleGroups['LatissimusDorsi']! + 1;
-            break;
-          case 'Rhomboid':
-            muscleGroups['Rhomboid'] = muscleGroups['Rhomboid']! + 1;
-            break;
-          case 'Trapezius':
-            muscleGroups['Trapezius'] = muscleGroups['Trapezius']! + 1;
-            break;
-          case 'Teres':
-            muscleGroups['Teres'] = muscleGroups['Teres']! + 1;
-            break;
-          case 'Erector Spinae':
-            muscleGroups['ErectorSpinae'] = muscleGroups['ErectorSpinae']! + 1;
-            break;
-          case 'Biceps':
-            muscleGroups['Biceps'] = muscleGroups['Biceps']! + 1;
-            break;
-          case 'Triceps':
-            muscleGroups['Triceps'] = muscleGroups['Triceps']! + 1;
-            break;
-          case 'Deltoids':
-            muscleGroups['Deltoids'] = muscleGroups['Deltoids']! + 1;
-            break;
-          case 'Obliques':
-            muscleGroups['Obliques'] = muscleGroups['Obliques']! + 1;
-            break;
-          case 'Abs':
-            muscleGroups['Abs'] = muscleGroups['Abs']! + 1;
-            break;
-          case 'Hamstrings':
-            muscleGroups['Hamstrings'] = muscleGroups['Hamstrings']! + 1;
-            break;
-          case 'Gluteals':
-            muscleGroups['Gluteals'] = muscleGroups['Gluteals']! + 1;
-            break;
-          case 'Quadriceps':
-            muscleGroups['Quadriceps'] = muscleGroups['Quadriceps']! + 1;
-            break;
-          case 'Calves':
-            muscleGroups['Calves'] = muscleGroups['Calves']! + 1;
-            break;
-          default:
-            break;
-        }
+        muscleGroups[area] = muscleGroups[area]! + 1;
       }
     }
     worked = muscleGroups.entries
