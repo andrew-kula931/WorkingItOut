@@ -27,13 +27,13 @@ class _WorkoutPage extends State<WorkoutPage> {
 
   //Setup for areas worked calculations
   Map<String, int> muscleGroups = {
-    'UpperChest': 0,
-    'LowerChest': 0,
-    'LatissimusDorsi': 0,
+    'Upper Chest': 0,
+    'Lower Chest': 0,
+    'Latissimus Dorsi': 0,
     'Rhomboid': 0,
     'Trapezius': 0,
     'Teres': 0,
-    'ErectorSpinae': 0,
+    'Erector Spinae': 0,
     'Biceps': 0,
     'Triceps': 0,
     'Deltoids': 0,
