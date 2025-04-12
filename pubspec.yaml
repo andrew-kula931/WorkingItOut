@@ -48,6 +48,7 @@ dependencies:
   googleapis_auth: ^1.4.0
   google_generative_ai: ^0.4.6
   web: ^1.1.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

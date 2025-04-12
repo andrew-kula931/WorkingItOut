@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'workout_pages/workout_page.dart';
@@ -12,6 +14,7 @@ import 'data/spinner_db.dart';
 import 'fun_pages/solitare.dart';
 import 'fun_pages/poker.dart';
 import 'fun_pages/chess/chess.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,6 +72,8 @@ class _WorkoutAppState extends State<WorkoutApp> {
   final _formKey = GlobalKey<FormState>();
   String workoutType = '';
   int duration = 0;
+
+  final Uri _url = Uri.parse('https://buchritter.onrender.com');
 
   //Color variables
   Map<String, Color> colorMap = {
@@ -176,6 +181,12 @@ class _WorkoutAppState extends State<WorkoutApp> {
     }
   }
 
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
+  }
+
 /*
     Widget Tree Starter here
 */
@@ -197,149 +208,168 @@ class _WorkoutAppState extends State<WorkoutApp> {
 
         //Main page is the navagation row stacked on the main column
         child: Stack(
+          alignment: const Alignment(0, 0),
           children: [
             //Main page
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //Top Info
-                Container(
-                  margin: const EdgeInsets.only(left: 40, top: 60),
-                  child:
-                      const Text('This Week:', style: TextStyle(fontSize: 30)),
-                ),
-
-                //The Event bar
-                Container(
-                  margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
-                  decoration: const BoxDecoration(color: Colors.lightGreen),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 4, right: 4),
-                        child: Text('Events', style: TextStyle(fontSize: 20)),
-                      ),
-                    ],
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 50, bottom: 20),
+                child: ListView(scrollDirection: Axis.vertical, children: [
+                  // Buch Ritter advertisement
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 5, left: 10, right: 10, bottom: 5),
+                    child: Container(
+                      height: 200,
+                      color: const Color.fromARGB(255, 3, 8, 60),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(top: 20, left: 20),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  spacing: 10,
+                                  children: [
+                                    Text("Check out Buch Ritter",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20)),
+                                    Padding(
+                                        padding: EdgeInsets.only(bottom: 2),
+                                        child: Icon(Icons.book,
+                                            color: Colors.white))
+                                  ]),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                  top: 10, left: 40, bottom: 20),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  spacing: 10,
+                                  children: [
+                                    Text(
+                                        "Features a place to write and a place to review. WIP",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 12)),
+                                  ]),
+                            ),
+                            Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: GestureDetector(
+                                        onTap: _launchUrl,
+                                        child: Text("To Website",
+                                            style: TextStyle(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                color: Colors.blue[500])),
+                                      ))
+                                ])
+                          ]),
+                    ),
                   ),
-                ),
-
-                //The goals bar
-                Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20),
-                  decoration: const BoxDecoration(color: Colors.green),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 4, right: 4),
-                        child: Text('Goals', style: TextStyle(fontSize: 20)),
-                      ),
-                    ],
-                  ),
-                ),
-
-                //The workout bar
-                Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20),
-                  decoration: const BoxDecoration(color: Colors.lightGreen),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4, right: 4),
-                        child: Text('Workouts', style: TextStyle(fontSize: 20)),
-                      ),
-                      SizedBox(
-                        height: 60,
-                        width: MediaQuery.of(context).size.width * .7,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: scheduledWorkouts.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                  color: Colors.green,
-                                  width: 80,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Container(
+                        height: 200,
+                        color: const Color.fromARGB(227, 212, 126, 111),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(top: 20, left: 20),
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    spacing: 10,
                                     children: [
-                                      Text(scheduledWorkouts[index].name)
-                                    ],
-                                  ));
-                            }),
-                      )
-                    ],
+                                      Text("Workout Quick Menu",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20)),
+                                    ]),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 40, bottom: 20),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    mainAxisSize: MainAxisSize.max,
+                                    spacing: 10,
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            if (!Hive.isBoxOpen('Workout')) {
+                                              await Hive.openBox('Workout');
+                                            }
+                                            if (!Hive.isBoxOpen('WorkoutDoc')) {
+                                              await Hive.openBox('WorkoutDoc');
+                                            }
+                                            if (!Hive.isBoxOpen(
+                                                'WorkoutSchedule')) {
+                                              await Hive.openBox(
+                                                  'WorkoutSchedule');
+                                            }
+                                            if (!Hive.isBoxOpen(
+                                                'WorkoutNotes')) {
+                                              await Hive.openBox(
+                                                  'WorkoutNotes');
+                                            }
+                                            Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const WorkoutPage()))
+                                                .then((value) {
+                                              _closeWorkoutBoxes();
+                                            });
+                                          },
+                                          child: const Text("Home")),
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            if (!Hive.isBoxOpen('Workout')) {
+                                              await Hive.openBox('Workout');
+                                            }
+                                            if (!Hive.isBoxOpen('WorkoutDoc')) {
+                                              await Hive.openBox('WorkoutDoc');
+                                            }
+                                            Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const WorkoutArchive()))
+                                                .then((value) {
+                                              _closeWorkoutBoxes();
+                                            });
+                                          },
+                                          child: const Text("Document")),
+                                    ]),
+                              ),
+                            ])),
                   ),
-                ),
-
-                //Health Summary
-                const Column(
-                  children: [
-                    Text('Health Summary', style: TextStyle(fontSize: 30)),
-
-                    //Calories burned
-                    Padding(
-                      padding: EdgeInsets.only(left: 40, right: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Calories burned this week: '),
-                          Text('Fill in some value.'),
-                        ],
-                      ),
-                    ),
-
-                    //Calories consumed
-                    Padding(
-                      padding: EdgeInsets.only(left: 40, right: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Calories consumed:  '),
-                          Text('Fill in some value.'),
-                        ],
-                      ),
-                    ),
-
-                    //Next workout to do
-                    Padding(
-                      padding: EdgeInsets.only(left: 40, right: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Next Workout: '),
-                          Text('Fill in some value.'),
-                        ],
-                      ),
-                    ),
-
-                    //Underworked areas
-                    Padding(
-                      padding: EdgeInsets.only(left: 40, right: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Underworked areas: '),
-                          Text('Fill in some value.'),
-                        ],
-                      ),
-                    ),
-
-                    //Delete this because it is unnecessary
-                    Padding(
-                      padding: EdgeInsets.only(left: 40, right: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                              'Major Change to the algorithm, this will crash everything'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Container(
+                        height: 200,
+                        color: const Color.fromARGB(243, 3, 48, 145),
+                        child: const Center(child: Text("TBA"))),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Container(
+                        height: 200,
+                        color: const Color.fromARGB(243, 3, 48, 145),
+                        child: const Center(child: Text("TBA"))),
+                  ),
+                ]),
+              ),
             ),
 
             /*
@@ -371,7 +401,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                             if (!Hive.isBoxOpen('GameGoals')) {
                               await Hive.openBox('GameGoals');
                             }
-                            // ignore: use_build_context_synchronously
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -413,7 +442,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                         await Hive.openBox('GameGoals');
                                       }
 
-                                      // ignore: use_build_context_synchronously
                                       Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -458,7 +486,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                           Hive.box('RecentGames').getAt(0);
                                       if (recentGameBox != null &&
                                           recentGameBox.recents.isNotEmpty) {
-                                        // ignore: use_build_context_synchronously
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -514,7 +541,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                             if (!Hive.isBoxOpen('WorkoutNotes')) {
                               await Hive.openBox('WorkoutNotes');
                             }
-                            // ignore: use_build_context_synchronously
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -554,7 +580,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       if (!Hive.isBoxOpen('WorkoutNotes')) {
                                         await Hive.openBox('WorkoutNotes');
                                       }
-                                      // ignore: use_build_context_synchronously
                                       Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -590,7 +615,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       if (!Hive.isBoxOpen('WorkoutDoc')) {
                                         await Hive.openBox('WorkoutDoc');
                                       }
-                                      // ignore: use_build_context_synchronously
                                       Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -613,7 +637,8 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                               color: colorMap[
                                                   'viewWorkoutHistoryColor']),
                                           child: const Center(
-                                            child: Text("View History"),
+                                            child: Text("View History",
+                                                textAlign: TextAlign.center),
                                           )),
                                     ),
                                   ),
@@ -625,7 +650,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                       if (!Hive.isBoxOpen('WorkoutSchedule')) {
                                         await Hive.openBox('WorkoutSchedule');
                                       }
-                                      //ignore: use_build_context_synchronously
                                       Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -648,7 +672,8 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                               color: colorMap[
                                                   'routinePlannerColor']),
                                           child: const Center(
-                                            child: Text("Routine Planner"),
+                                            child: Text("Routine Planner",
+                                                textAlign: TextAlign.center),
                                           )),
                                     ),
                                   ),
@@ -775,7 +800,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                           await Hive.box('SpinnerData')
                                               .add(data);
                                         }
-                                        // ignore: use_build_context_synchronously
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
