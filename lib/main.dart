@@ -231,7 +231,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
-                                  spacing: 10,
                                   children: [
                                     Text("Check out Buch Ritter",
                                         style: TextStyle(
@@ -248,7 +247,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
-                                  spacing: 10,
                                   children: [
                                     Text(
                                         "Features a place to write and a place to review. WIP",
@@ -287,7 +285,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
-                                    spacing: 10,
                                     children: [
                                       Text("Workout Quick Menu",
                                           style: TextStyle(
@@ -302,7 +299,6 @@ class _WorkoutAppState extends State<WorkoutApp> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     mainAxisSize: MainAxisSize.max,
-                                    spacing: 10,
                                     children: [
                                       ElevatedButton(
                                           onPressed: () async {
